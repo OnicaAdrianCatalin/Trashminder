@@ -1,4 +1,4 @@
-package com.example.trashminder.ui.theme
+package com.example.trashminder.presentation.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes

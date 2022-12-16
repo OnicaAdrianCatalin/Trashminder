@@ -1,4 +1,4 @@
-package com.example.trashminder.ui.theme
+package com.example.trashminder.presentation.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle
