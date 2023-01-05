@@ -2,7 +2,12 @@ package com.example.trashminder.presentation.createdReminder
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.material.*
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.Icon
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -75,9 +80,10 @@ fun RowScope.AddItem(
     currentDestination: NavDestination?,
     navController: NavHostController
 ) {
-    BottomNavigationItem(label = {
-        Text(text = screen.title)
-    },
+    BottomNavigationItem(
+        label = {
+            Text(text = screen.title)
+        },
         icon = {
             Icon(imageVector = screen.icon, contentDescription = "Navigation icon")
         },

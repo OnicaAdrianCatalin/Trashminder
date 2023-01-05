@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-fun CalendarScreen(){
+fun CalendarScreen() {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -20,6 +20,6 @@ fun CalendarScreen(){
 
 @Composable
 @Preview(showBackground = true)
-fun CalendarScreenPreview(){
+fun CalendarScreenPreview() {
     CalendarScreen()
 }

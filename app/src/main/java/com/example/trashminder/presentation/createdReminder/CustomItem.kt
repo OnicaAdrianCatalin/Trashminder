@@ -2,7 +2,13 @@ package com.example.trashminder.presentation.createdReminder
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -18,52 +24,45 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.trashminder.R
 import com.example.trashminder.model.Reminder
-import com.example.trashminder.presentation.theme.*
+import com.example.trashminder.presentation.theme.black
+import com.example.trashminder.presentation.theme.blueTrash
+import com.example.trashminder.presentation.theme.greenTrash
+import com.example.trashminder.presentation.theme.red
+import com.example.trashminder.presentation.theme.yellow
 
 @Composable
 fun CustomItem(reminder: Reminder) {
-    if (reminder.type == "plastic") {
-        CardItem(
+
+    when (reminder.type) {
+        "plastic" -> CardItem(
             reminder = reminder,
             startColor = yellow,
             type = "Plastic",
             painterId = R.drawable.plastic_bottle_png_download_image,
             modifierImage = Modifier.size(90.dp)
         )
-    }
-
-    if (reminder.type == "metal") {
-        CardItem(
+        "metal" -> CardItem(
             reminder = reminder,
             startColor = red,
             type = "Metal",
             painterId = R.drawable._removal_ai__tmp_63a2fb077da67,
             modifierImage = Modifier.size(90.dp)
         )
-    }
-
-    if (reminder.type == "hartie") {
-        CardItem(
+        "hartie" -> CardItem(
             reminder = reminder,
             startColor = blueTrash,
             type = "Hartie si Carton",
             painterId = R.drawable.stack_of_old_blank_photographs_thumb30,
             modifierImage = Modifier.size(90.dp)
         )
-    }
-
-    if (reminder.type == "sticla") {
-        CardItem(
+        "sticla" -> CardItem(
             reminder = reminder,
             startColor = greenTrash,
             type = "Sticla",
             painterId = R.drawable.broken_bottle_png23,
             modifierImage = Modifier.size(130.dp, 80.dp)
         )
-    }
-
-    if (reminder.type == "menajer") {
-        CardItem(
+        "menajer" -> CardItem(
             reminder = reminder,
             startColor = black,
             type = "Menajer",
@@ -112,7 +111,6 @@ private fun CardItem(
                 )
             }
         }
-
     }
 }
 
