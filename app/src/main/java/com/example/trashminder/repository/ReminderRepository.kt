@@ -8,31 +8,31 @@ class ReminderRepository {
            Reminder(
                id=0,
                type="plastic",
-               date="",
+               date="18/01/2023 16:19",
                repetition = "La 2 saptamani"
            ) ,
             Reminder(
                 id=1,
                 type="metal",
-                date="",
+                date="18/01/2023 16:19",
                 repetition = "La 2 saptamani"
             ) ,
             Reminder(
                 id=2,
                 type="hartie",
-                date="",
+                date="18/01/2023 16:19",
                 repetition = "saptamanal"
             ) ,
             Reminder(
                 id=3,
                 type="sticla",
-                date="",
+                date="18/01/2023 16:19",
                 repetition = "La 2 saptamani"
             ) ,
             Reminder(
                 id=4,
                 type="menajer",
-                date="",
+                date="18/01/2023 16:19",
                 repetition = "saptamanal"
             ) ,
 
