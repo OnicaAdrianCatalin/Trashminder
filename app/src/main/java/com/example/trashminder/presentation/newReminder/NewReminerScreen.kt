@@ -73,6 +73,7 @@ fun NewReminderScreen() {
         topBar = {
             TopAppBar(
                 backgroundColor = Color.Transparent,
+                elevation = 0.dp,
                 modifier = Modifier.background(
                     brush = Brush.verticalGradient(
                         listOf(lightGreen, darkerGreen)
@@ -83,6 +84,7 @@ fun NewReminderScreen() {
         bottomBar = {
             BottomAppBar(
                 backgroundColor = Color.Transparent,
+                elevation = 0.dp,
                 modifier = Modifier.background(
                     brush = Brush.verticalGradient(
                         listOf(darkerGreen, bleu)
