@@ -33,10 +33,12 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,8 +46,11 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import com.example.trashminder.presentation.navigation.NavigationGraphs
+import com.example.trashminder.presentation.navigation.NavigationRoute
 import com.example.trashminder.presentation.theme.black
 import com.example.trashminder.presentation.theme.bleu
 import com.example.trashminder.presentation.theme.darkerGreen
@@ -54,22 +59,19 @@ import com.example.trashminder.presentation.theme.lightGreen
 import com.example.trashminder.utils.Constants
 import java.util.Calendar
 import java.util.Date
+import kotlinx.coroutines.launch
 
-@Preview
 @Composable
-fun NewReminderScreen() {
-    val expanded = remember {
-        mutableStateOf(false)
-    }
-    val dateAndTimeDialogTrigger = remember {
-        mutableStateOf(false)
-    }
-    val chosenDate = remember {
-        mutableStateOf("Data si ora")
-    }
+fun NewReminderScreen(navController: NavController) {
+    val viewModel = viewModel<NewReminderViewModel>()
+    val expanded = remember { mutableStateOf(false) }
+    val dateAndTimeDialogTrigger = remember { mutableStateOf(false) }
+    val chosenDate = remember { mutableStateOf("Data si ora") }
     val timespan = remember { mutableStateOf<Int?>(null) }
     val trashType = remember { mutableStateOf("") }
-    Scaffold(
+    val scaffoldState = rememberScaffoldState()
+    val coroutineScope = rememberCoroutineScope()
+    Scaffold(scaffoldState = scaffoldState,
         topBar = {
             TopAppBar(
                 backgroundColor = Color.Transparent,
@@ -99,6 +101,28 @@ fun NewReminderScreen() {
                         modifier = Modifier.size(width = 160.dp, height = 40.dp),
                         text = "Salveaza"
                     ) {
+                        coroutineScope.launch {
+                            if (trashType.value.isEmpty() ||
+                                timespan.value == null ||
+                                chosenDate.value == "Data si ora"
+                            ) {
+                                scaffoldState.snackbarHostState.showSnackbar(
+                                    message = "Fields cannot be empty",
+                                    actionLabel = "Error"
+                                )
+                            } else {
+                                viewModel.createProfileOrAddData(
+                                    type = trashType.value,
+                                    date = chosenDate.value,
+                                    repetition = Constants.timePeriod[timespan.value!!]
+                                )
+                                navController.navigate(NavigationGraphs.MAINSCREEN) {
+                                    popUpTo(NavigationRoute.NewReminder.route) {
+                                        inclusive = true
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }

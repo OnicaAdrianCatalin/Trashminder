@@ -3,7 +3,8 @@ package com.example.trashminder
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.example.trashminder.presentation.createdReminder.MainScreen
+import androidx.navigation.compose.rememberNavController
+import com.example.trashminder.presentation.navigation.RootNavigationGraph
 import com.example.trashminder.presentation.theme.TrashminderTheme
 
 class MainActivity : ComponentActivity() {
@@ -11,7 +12,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             TrashminderTheme {
-                MainScreen()
+                RootNavigationGraph(navController = rememberNavController())
             }
         }
     }
