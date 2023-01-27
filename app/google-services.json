@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "687238692057",
+    "project_id": "trashminder-8ca99",
+    "storage_bucket": "trashminder-8ca99.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:687238692057:android:2c8af28cddc02c328152c8",
+        "android_client_info": {
+          "package_name": "com.example.trashminder"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "687238692057-flpoj6qqtarho6kmdis9m8u6f5anqvaq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCF3UAAXogjavIVJasCa6xpwwj222LVs0g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "687238692057-flpoj6qqtarho6kmdis9m8u6f5anqvaq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

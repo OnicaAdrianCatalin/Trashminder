@@ -1,7 +1,10 @@
 package com.example.trashminder.presentation.createdReminder
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
@@ -20,6 +23,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.trashminder.presentation.navigation.NavigationRoute
 import com.example.trashminder.presentation.theme.bleu
 import com.example.trashminder.presentation.theme.darkerGreen
 import com.example.trashminder.presentation.theme.lightGreen
@@ -29,19 +33,26 @@ fun MainScreen() {
     val navController = rememberNavController()
     Scaffold(
         topBar = {
-            TopAppBar(
-                backgroundColor = Color.Transparent,
-                elevation = 0.dp,
-                modifier = Modifier.background(
-                    brush = Brush.verticalGradient(
-                        listOf(lightGreen, darkerGreen)
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentDestination = navBackStackEntry?.destination
+            if (currentDestination?.route != NavigationRoute.NewReminder.route) {
+                TopAppBar(
+                    backgroundColor = Color.Transparent,
+                    elevation = 0.dp,
+                    modifier = Modifier.background(
+                        brush = Brush.verticalGradient(
+                            listOf(lightGreen, darkerGreen)
+                        )
                     )
-                )
-            ) {}
+                ) {}}
         },
         bottomBar = { BottomBar(navController = navController) }
     ) {
-        BottomNavGraph(navController = navController)
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()) {
+            BottomNavGraph(navController = navController)
+        }
     }
 }
 
@@ -54,22 +65,24 @@ fun BottomBar(navController: NavHostController) {
     )
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
-
-    BottomNavigation(
-        backgroundColor = Color.Transparent,
-        elevation = 0.dp,
-        modifier = Modifier.background(
-            brush = Brush.verticalGradient(
-                listOf(darkerGreen, bleu)
+    val bottomBarDestination = screens.any { it.route == currentDestination?.route }
+    if (bottomBarDestination) {
+        BottomNavigation(
+            backgroundColor = Color.Transparent,
+            elevation = 0.dp,
+            modifier = Modifier.background(
+                brush = Brush.verticalGradient(
+                    listOf(darkerGreen, bleu)
+                )
             )
-        )
-    ) {
-        screens.forEach { screen ->
-            AddItem(
-                screen = screen,
-                currentDestination = currentDestination,
-                navController = navController
-            )
+        ) {
+            screens.forEach { screen ->
+                AddItem(
+                    screen = screen,
+                    currentDestination = currentDestination,
+                    navController = navController
+                )
+            }
         }
     }
 }
@@ -93,7 +106,6 @@ fun RowScope.AddItem(
         onClick = {
             navController.navigate(screen.route) {
                 popUpTo(navController.graph.findStartDestination().id)
-                launchSingleTop = true
             }
         }
     )
