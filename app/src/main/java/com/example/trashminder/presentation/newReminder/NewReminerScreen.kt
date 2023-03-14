@@ -2,7 +2,9 @@ package com.example.trashminder.presentation.newReminder
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.os.Build
 import android.widget.DatePicker
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -57,10 +59,10 @@ import com.example.trashminder.presentation.theme.darkerGreen
 import com.example.trashminder.presentation.theme.lightBlack
 import com.example.trashminder.presentation.theme.lightGreen
 import com.example.trashminder.utils.Constants
-import java.util.Calendar
-import java.util.Date
 import kotlinx.coroutines.launch
+import java.util.*
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NewReminderScreen(navController: NavController) {
     val viewModel = viewModel<NewReminderViewModel>()
@@ -224,13 +226,31 @@ private fun PickDateAndTime(chosenDate: MutableState<String>) {
     val datePickerDialog = DatePickerDialog(
         context,
         { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
-            chosenDate.value = "$mDayOfMonth/${mMonth + 1}/$mYear"
+            var day = "$mDayOfMonth"
+            var month = "${mMonth + 1}"
+            if (mDayOfMonth < 10) {
+                day = "0$mDayOfMonth"
+            }
+            if (mMonth < 10) {
+                month = "0${mMonth + 1}"
+            }
+            chosenDate.value = "$day/$month/$mYear"
+
         }, year, month, day
     )
     val timePickerDialog = TimePickerDialog(
         context,
         { _, mHour: Int, mMinute: Int ->
-            chosenDate.value += " $mHour:$mMinute"
+            var newHour = "$mHour"
+            var newMinutes = "$mMinute"
+
+            if (mHour < 10) {
+                newHour = "0$mHour"
+            }
+            if (mMinute < 10) {
+                newMinutes = "0$mMinute"
+            }
+            chosenDate.value += " $newHour:$newMinutes"
         }, hour, minutes, false
     )
     datePickerDialog.show()

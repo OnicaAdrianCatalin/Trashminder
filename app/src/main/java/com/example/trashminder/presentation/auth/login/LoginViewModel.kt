@@ -15,7 +15,7 @@ class LoginViewModel : ViewModel() {
     val authResult: State<Result<AuthErrors, Unit>> = _authResult
 
     init {
-         auth.signOut()
+         //auth.signOut()
     }
 
     fun signInWithEmailAndPassword(email: String, password: String) {
