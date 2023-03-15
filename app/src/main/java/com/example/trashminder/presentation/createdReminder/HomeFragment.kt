@@ -1,6 +1,9 @@
 package com.example.trashminder.presentation.createdReminder
 
-import android.util.Log
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
@@ -13,30 +16,41 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import com.example.trashminder.R
-import com.example.trashminder.model.ListOfReminders
-import com.example.trashminder.presentation.navigation.NavigationGraphs
-import com.example.trashminder.utils.Response
 
-@Composable
-fun HomeScreen(navController: NavController) {
-    val viewModel = viewModel<HomeScreenViewModel>()
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        val state = rememberLazyListState()
-        Reminders(viewModel = viewModel) { list ->
-            LazyColumn(horizontalAlignment = Alignment.CenterHorizontally ,state = state) {
-                items(list.reminders) {
+class HomeFragment : Fragment() {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        return ComposeView(requireContext()).apply {
+            setContent {
+                HomeScreen()
+            }
+        }
+    }
+
+    @Composable
+    fun HomeScreen() {
+        val viewModel = viewModel<HomeScreenViewModel>()
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            val state = rememberLazyListState()
+            LazyColumn(horizontalAlignment = Alignment.CenterHorizontally, state = state) {
+                items(viewModel.reminderResponse.value?.reminders ?: emptyList()) {
                     CustomItem(reminder = it)
                 }
                 item {
                     IconButton(onClick = {
-                        navController.navigate(NavigationGraphs.NEWREMINDER)
+                        findNavController().navigate(R.id.newReminderFragment)
                     }) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_add_circle),
@@ -48,18 +62,5 @@ fun HomeScreen(navController: NavController) {
                 }
             }
         }
-    }
-}
-
-
-@Composable
-fun Reminders(
-    viewModel: HomeScreenViewModel,
-    content: @Composable (reminders: ListOfReminders) -> Unit
-) {
-    when (val reminderResponse = viewModel.reminderResponse.value) {
-        is Response.Loading -> Log.d("TAG", "Books: print")
-        is Response.Success -> content(reminderResponse.data)
-        is Response.Failure -> print(reminderResponse.e)
     }
 }
