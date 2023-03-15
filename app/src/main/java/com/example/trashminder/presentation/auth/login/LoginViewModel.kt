@@ -14,16 +14,12 @@ class LoginViewModel : ViewModel() {
     private val _authResult = mutableStateOf<Result<AuthErrors, Unit>>((Result.Loading))
     val authResult: State<Result<AuthErrors, Unit>> = _authResult
 
-    init {
-         //auth.signOut()
-    }
-
     fun signInWithEmailAndPassword(email: String, password: String) {
         if (email.isNotEmpty() && password.isNotEmpty()) {
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Log.d("TAG", "signedIn successfully ")
+                        Log.d(TAG, "signedIn successfully ")
                         _authResult.value = Result.Success(Unit)
                     } else {
                         if (task.exception is IllegalArgumentException) {
@@ -38,11 +34,15 @@ class LoginViewModel : ViewModel() {
                                         AuthErrors.EMAIL_OR_PASSWORD_INCORRECT
                                     )
                         }
-                        Log.e("TAG", "signIn failed", task.exception)
+                        Log.e(TAG, "signIn failed", task.exception)
                     }
                 }
         } else {
             _authResult.value = Result.Failure(AuthErrors.EMPTY_FIELDS)
         }
+    }
+
+    companion object {
+        private const val TAG = "LoginViewModel"
     }
 }

@@ -4,6 +4,10 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
@@ -17,15 +21,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import com.example.trashminder.R
 import com.example.trashminder.model.ListOfReminders
 import com.example.trashminder.model.Reminder
-import com.example.trashminder.presentation.navigation.NavigationGraphs
-import com.example.trashminder.utils.Response
 import com.example.trashminder.utils.TrashminderNotifications
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -36,25 +40,37 @@ import java.util.*
 
 
 @RequiresApi(Build.VERSION_CODES.O)
-@Composable
-fun HomeScreen(navController: NavController) {
 
-    val viewModel = viewModel<HomeScreenViewModel>()
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        val context= LocalContext.current
-        val state = rememberLazyListState()
-        Reminders(viewModel = viewModel) { list ->
+class HomeFragment : Fragment() {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        return ComposeView(requireContext()).apply {
+            setContent {
+                HomeScreen()
+            }
+        }
+    }
+
+    @Composable
+    fun HomeScreen() {
+        val viewModel = viewModel<HomeScreenViewModel>()
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            val state = rememberLazyListState()
+            val context= LocalContext.current
             LazyColumn(horizontalAlignment = Alignment.CenterHorizontally, state = state) {
-                items(list.reminders) {
+                items(viewModel.reminderResponse.value?.reminders ?: emptyList()) {
                     CustomItem(reminder = it)
 
                     setNotifications(it, context)
                 }
                 item {
                     IconButton(onClick = {
-                        navController.navigate(NavigationGraphs.NEWREMINDER)
+                        findNavController().navigate(R.id.newReminderFragment)
                     }) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_add_circle),
@@ -95,18 +111,5 @@ fun setNotifications(reminder: Reminder, context: Context) {
         Log.d("Main", "Id to int= ${timeInMilliseconds.toInt()}")
 
         TrashminderNotifications().setRepetitiveAlarm(timeSec,context,timeInMilliseconds.toInt(), reminder.type, reminder.repetition)
-    }
-}
-
-
-@Composable
-fun Reminders(
-    viewModel: HomeScreenViewModel,
-    content: @Composable (reminders: ListOfReminders) -> Unit
-) {
-    when (val reminderResponse = viewModel.reminderResponse.value) {
-        is Response.Loading -> Log.d("TAG", "Books: print")
-        is Response.Success -> content(reminderResponse.data)
-        is Response.Failure -> print(reminderResponse.e)
     }
 }

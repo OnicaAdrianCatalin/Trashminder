@@ -1,76 +1,60 @@
 package com.example.trashminder
 
-import android.Manifest
-import android.app.*
-import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
-import androidx.compose.runtime.*
-import androidx.compose.ui.platform.LocalContext
-import androidx.core.content.ContextCompat
-import androidx.navigation.compose.rememberNavController
-import androidx.work.*
-import androidx.work.ExistingWorkPolicy.REPLACE
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
+import com.example.trashminder.databinding.ActivityMainBinding
 
-import com.example.trashminder.presentation.navigation.RootNavigationGraph
-import com.example.trashminder.presentation.theme.TrashminderTheme
-import com.example.trashminder.utils.*
-import java.util.*
-import java.util.concurrent.TimeUnit.MILLISECONDS
+class MainActivity : AppCompatActivity() {
+    private lateinit var _binding: ActivityMainBinding
 
-
-class MainActivity : ComponentActivity() {
-
-    private lateinit var alarmManager: AlarmManager
-    private lateinit var pendingIntent: PendingIntent
-
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            val context = LocalContext.current
-            TrashminderTheme {
-                RootNavigationGraph(navController = rememberNavController())
-
-            }
+        _binding = ActivityMainBinding.inflate(LayoutInflater.from(this))
+        setContentView(_binding.root)
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.main_nav_host_fragment) as NavHostFragment
+        _binding.bottomNavigation.setupWithNavController(navHostFragment.navController)
+        _binding.bottomNavigation.setOnItemSelectedListener { menuItem ->
+            bottomNavigationHandler(navHostFragment, menuItem)
+            true
         }
+        setNavBarVisibility(navHostFragment.navController)
+    }
 
-        fun setAlarm(time: Long, context: Context, id: Int) {
-
-            alarmManager = context.getSystemService(ALARM_SERVICE) as AlarmManager
-            val intent = Intent(context, AlarmReceiver::class.java)
-
-            pendingIntent = PendingIntent.getBroadcast(context, id, intent, 0)
-            alarmManager.setInexactRepeating(
-
-                AlarmManager.RTC_WAKEUP, time, 60000,
-                pendingIntent
+    private fun bottomNavigationHandler(
+        navHostFragment: NavHostFragment,
+        menuItem: MenuItem
+    ) {
+        val previousDestinationId =
+            navHostFragment.navController.previousBackStackEntry?.destination?.id
+        val currentDestinationId = navHostFragment.navController.currentDestination?.id
+        if (previousDestinationId == R.id.homeFragment && currentDestinationId == R.id.homeFragment) {
+            navHostFragment.navController.popBackStack()
+            navHostFragment.navController.navigate(menuItem.itemId)
+        } else {
+            navHostFragment.navController.popBackStack(
+                destinationId = R.id.homeFragment,
+                inclusive = false
             )
-
-            Log.d("Main", "Alarm set successfuly")
-
+            navHostFragment.navController.navigate(menuItem.itemId)
         }
+    }
 
-        fun createNotificationsChannel() {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val name: CharSequence = "Name"
-                val description = "description"
-                val importance = NotificationManager.IMPORTANCE_HIGH
-                val channel = NotificationChannel("channel1_id", name, importance)
-                channel.description = description
-                val notificationManager = getSystemService(
-                    NotificationManager::class.java
-                )
-
-                notificationManager.createNotificationChannel(channel)
+    private fun setNavBarVisibility(navController: NavController) {
+        navController.addOnDestinationChangedListener { _, direction, _ ->
+            when (direction.id) {
+                R.id.homeFragment, R.id.calendarFragment, R.id.settingsFragment -> {
+                    _binding.bottomNavigation.visibility = View.VISIBLE
+                }
+                else -> {
+                    _binding.bottomNavigation.visibility = View.GONE
+                }
             }
         }
     }
