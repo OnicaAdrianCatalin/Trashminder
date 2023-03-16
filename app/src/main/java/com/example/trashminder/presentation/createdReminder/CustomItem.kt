@@ -29,43 +29,44 @@ import com.example.trashminder.presentation.theme.blueTrash
 import com.example.trashminder.presentation.theme.greenTrash
 import com.example.trashminder.presentation.theme.red
 import com.example.trashminder.presentation.theme.yellow
+import com.example.trashminder.utils.TrashTypeItems
 
 @Composable
 fun CustomItem(reminder: Reminder) {
 
     when (reminder.type) {
-        "plastic" -> CardItem(
+        TrashTypeItems.Plastic.trash -> CardItem(
             reminder = reminder,
             startColor = yellow,
-            type = "Plastic",
+            type = TrashTypeItems.Plastic.type,
             painterId = R.drawable.plastic_bottle_png_download_image,
             modifierImage = Modifier.size(90.dp)
         )
-        "metal" -> CardItem(
+        TrashTypeItems.Metale.trash -> CardItem(
             reminder = reminder,
             startColor = red,
-            type = "Metal",
+            type = TrashTypeItems.Metale.type,
             painterId = R.drawable._removal_ai__tmp_63a2fb077da67,
             modifierImage = Modifier.size(90.dp)
         )
-        "hartie" -> CardItem(
+        TrashTypeItems.Hartie.trash -> CardItem(
             reminder = reminder,
             startColor = blueTrash,
-            type = "Hartie si Carton",
+            type = TrashTypeItems.Hartie.type,
             painterId = R.drawable.stack_of_old_blank_photographs_thumb30,
             modifierImage = Modifier.size(90.dp)
         )
-        "sticla" -> CardItem(
+        TrashTypeItems.Sticla.trash -> CardItem(
             reminder = reminder,
             startColor = greenTrash,
-            type = "Sticla",
+            type = TrashTypeItems.Sticla.type,
             painterId = R.drawable.broken_bottle_png23,
             modifierImage = Modifier.size(130.dp, 80.dp)
         )
-        "menajer" -> CardItem(
+        TrashTypeItems.Menajer.trash -> CardItem(
             reminder = reminder,
             startColor = black,
-            type = "Menajer",
+            type = TrashTypeItems.Menajer.type,
             painterId = R.drawable.report_feat_removebg_preview,
             modifierImage = Modifier.size(110.dp, 90.dp)
         )
