@@ -23,9 +23,9 @@ import androidx.compose.ui.unit.dp
 fun CustomTextField(
     label: String,
     textFieldValue: MutableState<String>,
-    visualTransformation: VisualTransformation
+    visualTransformation: VisualTransformation = VisualTransformation.None
 ) {
-    Column() {
+    Column {
         OutlinedTextField(
             value = textFieldValue.value,
             onValueChange = { textFieldValue.value = it },

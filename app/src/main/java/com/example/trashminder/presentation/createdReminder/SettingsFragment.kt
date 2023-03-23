@@ -42,7 +42,7 @@ class SettingsFragment : Fragment() {
                 auth.signOut()
                 findNavController().navigate(R.id.action_settingsFragment_to_loginFragment)
             }) {
-                Text(text = "LogOut")
+                Text(text = getString(R.string.log_out_button))
             }
         }
     }

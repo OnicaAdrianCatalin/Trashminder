@@ -1,5 +1,6 @@
 package com.example.trashminder.presentation.createdReminder
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,7 +20,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.trashminder.R
@@ -29,47 +29,49 @@ import com.example.trashminder.presentation.theme.blueTrash
 import com.example.trashminder.presentation.theme.greenTrash
 import com.example.trashminder.presentation.theme.red
 import com.example.trashminder.presentation.theme.yellow
-import com.example.trashminder.utils.TrashTypeItems
+import com.example.trashminder.utils.TrashType
+import com.example.trashminder.utils.toLocalizedString
 
 @Composable
-fun CustomItem(reminder: Reminder) {
+fun CustomItem(reminder: Reminder?, context: Context) {
 
-    when (reminder.type) {
-        TrashTypeItems.Plastic.trash -> CardItem(
+    when (reminder?.type) {
+        TrashType.Plastic -> CardItem(
+            context = context,
             reminder = reminder,
             startColor = yellow,
-            type = TrashTypeItems.Plastic.type,
             painterId = R.drawable.plastic_bottle_png_download_image,
             modifierImage = Modifier.size(90.dp)
         )
-        TrashTypeItems.Metale.trash -> CardItem(
+        TrashType.Metals -> CardItem(
+            context = context,
             reminder = reminder,
             startColor = red,
-            type = TrashTypeItems.Metale.type,
             painterId = R.drawable._removal_ai__tmp_63a2fb077da67,
             modifierImage = Modifier.size(90.dp)
         )
-        TrashTypeItems.Hartie.trash -> CardItem(
+        TrashType.Paper -> CardItem(
+            context = context,
             reminder = reminder,
             startColor = blueTrash,
-            type = TrashTypeItems.Hartie.type,
             painterId = R.drawable.stack_of_old_blank_photographs_thumb30,
             modifierImage = Modifier.size(90.dp)
         )
-        TrashTypeItems.Sticla.trash -> CardItem(
+        TrashType.Glass -> CardItem(
+            context = context,
             reminder = reminder,
             startColor = greenTrash,
-            type = TrashTypeItems.Sticla.type,
             painterId = R.drawable.broken_bottle_png23,
             modifierImage = Modifier.size(130.dp, 80.dp)
         )
-        TrashTypeItems.Menajer.trash -> CardItem(
+        TrashType.Residuals -> CardItem(
+            context = context,
             reminder = reminder,
             startColor = black,
-            type = TrashTypeItems.Menajer.type,
             painterId = R.drawable.report_feat_removebg_preview,
             modifierImage = Modifier.size(110.dp, 90.dp)
         )
+        else -> {}
     }
 }
 
@@ -77,9 +79,9 @@ fun CustomItem(reminder: Reminder) {
 private fun CardItem(
     reminder: Reminder,
     startColor: Color,
-    type: String,
     painterId: Int,
-    modifierImage: Modifier
+    modifierImage: Modifier,
+    context: Context
 ) {
     Card(
         modifier = Modifier
@@ -93,37 +95,24 @@ private fun CardItem(
             ) {
                 Column(modifier = Modifier.padding(10.dp)) {
                     Text(
-                        text = type,
+                        text = reminder.type.toLocalizedString(context),
                         style = TextStyle(
                             color = Color.White,
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold
                         )
                     )
-                    Text(text = "Urmator: ${reminder.date}")
-                    Text(text = reminder.repetition)
+                    Text(text = "${context.getString(R.string.next_text)}: ${reminder.date}")
+                    Text(text = reminder.repetition.toLocalizedString(context))
                 }
                 Image(
                     contentScale = ContentScale.Crop,
                     painter = painterResource(id = painterId),
-                    contentDescription = type,
+                    contentDescription = reminder.type.toLocalizedString(context),
                     alpha = 0.5f,
                     modifier = modifierImage
                 )
             }
         }
     }
-}
-
-@Composable
-@Preview
-fun CustomItemPreview() {
-    CustomItem(
-        reminder = Reminder(
-            id = 0,
-            type = "plastic",
-            date = "",
-            repetition = "La 2 saptamani"
-        )
-    )
 }

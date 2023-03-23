@@ -61,7 +61,10 @@ import com.example.trashminder.presentation.theme.bleu
 import com.example.trashminder.presentation.theme.darkerGreen
 import com.example.trashminder.presentation.theme.lightBlack
 import com.example.trashminder.presentation.theme.lightGreen
-import com.example.trashminder.utils.Constants
+import com.example.trashminder.utils.TimePeriod
+import com.example.trashminder.utils.TrashType
+import com.example.trashminder.utils.toLocalizedString
+import com.example.trashminder.utils.toTrashType
 import java.util.Calendar
 import java.util.Date
 import kotlinx.coroutines.launch
@@ -86,7 +89,7 @@ class NewReminderFragment : Fragment() {
         val viewModel = viewModel<NewReminderViewModel>()
         val expanded = remember { mutableStateOf(false) }
         val dateAndTimeDialogTrigger = remember { mutableStateOf(false) }
-        val chosenDate = remember { mutableStateOf("Data si ora") }
+        val chosenDate = remember { mutableStateOf(getString(R.string.date_and_time_button)) }
         val timespan = remember { mutableStateOf<Int?>(null) }
         val trashType = remember { mutableStateOf("") }
         val scaffoldState = rememberScaffoldState()
@@ -120,22 +123,22 @@ class NewReminderFragment : Fragment() {
                     ) {
                         GradientButton(
                             modifier = Modifier.size(width = 160.dp, height = 40.dp),
-                            text = "Salveaza"
+                            text = getString(R.string.save_button)
                         ) {
                             coroutineScope.launch {
                                 if (trashType.value.isEmpty() ||
                                     timespan.value == null ||
-                                    chosenDate.value == "Data si ora"
+                                    chosenDate.value == getString(R.string.date_and_time_button)
                                 ) {
                                     scaffoldState.snackbarHostState.showSnackbar(
-                                        message = "Fields cannot be empty",
-                                        actionLabel = "Error"
+                                        message = getString(R.string.fields_cannot_be_not_empty_validation),
+                                        actionLabel = getString(R.string.error)
                                     )
                                 } else {
                                     viewModel.createProfileOrAddData(
-                                        type = trashType.value,
+                                        type = trashType.value.toTrashType(context = requireContext())!!,
                                         date = chosenDate.value,
-                                        repetition = Constants.timePeriod[timespan.value!!]
+                                        repetition = TimePeriod.values()[timespan.value!!]
                                     )
                                     findNavController().navigate(R.id.action_newReminderFragment_to_homeFragment)
                                 }
@@ -155,7 +158,7 @@ class NewReminderFragment : Fragment() {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Alege tipul de gunoi",
+                        text = getString(R.string.choose_trash_type),
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(12.dp)
                     )
@@ -174,7 +177,7 @@ class NewReminderFragment : Fragment() {
                     }
                     TimePeriodPick(timespan)
                     Button(onClick = { }) {
-                        Text(text = "Salveaza")
+                        Text(text = getString(R.string.save_button))
                     }
                 }
             }
@@ -197,7 +200,7 @@ class NewReminderFragment : Fragment() {
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = "Repetare",
+                    text = getString(R.string.repetition),
                     modifier = Modifier.padding(8.dp),
                     fontWeight = FontWeight.Bold
                 )
@@ -207,7 +210,7 @@ class NewReminderFragment : Fragment() {
                         .padding(start = 30.dp)
                         .fillMaxWidth()
                 ) {
-                    items(Constants.timePeriod.size) { item ->
+                    items(count = TimePeriod.values().size) { item->
                         Row(modifier = Modifier.padding(12.dp)) {
                             RadioButton(
                                 selected = timespan.value == item,
@@ -217,7 +220,7 @@ class NewReminderFragment : Fragment() {
                                 }
                             )
                             Text(
-                                text = Constants.timePeriod[item],
+                                text = TimePeriod.values()[item].toLocalizedString(requireContext()),
                                 modifier = Modifier.padding(start = 6.dp)
                             )
                         }
@@ -284,12 +287,12 @@ class NewReminderFragment : Fragment() {
                 onDismissRequest = { expanded.value = false },
                 modifier = Modifier.wrapContentSize()
             ) {
-                Constants.trashTypeElements.forEach { value ->
+                TrashType.values().forEach{ value ->
                     DropdownMenuItem(onClick = {
-                        trashType.value = value
+                        trashType.value = value.toLocalizedString(requireContext())
                         expanded.value = false
                     }) {
-                        Text(text = value)
+                        Text(text = value.toLocalizedString(requireContext()))
                     }
                 }
             }
