@@ -1,6 +1,5 @@
 package com.example.trashminder.presentation.createdReminder
 
-import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +17,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -30,48 +30,42 @@ import com.example.trashminder.presentation.theme.greenTrash
 import com.example.trashminder.presentation.theme.red
 import com.example.trashminder.presentation.theme.yellow
 import com.example.trashminder.utils.TrashType
-import com.example.trashminder.utils.toLocalizedString
+import com.example.trashminder.utils.toResourceId
 
 @Composable
-fun CustomItem(reminder: Reminder?, context: Context) {
+fun CustomItem(reminder: Reminder) {
 
-    when (reminder?.type) {
+    when (reminder.type) {
         TrashType.Plastic -> CardItem(
-            context = context,
             reminder = reminder,
             startColor = yellow,
             painterId = R.drawable.plastic_bottle_png_download_image,
             modifierImage = Modifier.size(90.dp)
         )
-        TrashType.Metals -> CardItem(
-            context = context,
+        TrashType.Metal -> CardItem(
             reminder = reminder,
             startColor = red,
             painterId = R.drawable._removal_ai__tmp_63a2fb077da67,
             modifierImage = Modifier.size(90.dp)
         )
         TrashType.Paper -> CardItem(
-            context = context,
             reminder = reminder,
             startColor = blueTrash,
             painterId = R.drawable.stack_of_old_blank_photographs_thumb30,
             modifierImage = Modifier.size(90.dp)
         )
         TrashType.Glass -> CardItem(
-            context = context,
             reminder = reminder,
             startColor = greenTrash,
             painterId = R.drawable.broken_bottle_png23,
             modifierImage = Modifier.size(130.dp, 80.dp)
         )
-        TrashType.Residuals -> CardItem(
-            context = context,
+        TrashType.Residual -> CardItem(
             reminder = reminder,
             startColor = black,
             painterId = R.drawable.report_feat_removebg_preview,
             modifierImage = Modifier.size(110.dp, 90.dp)
         )
-        else -> {}
     }
 }
 
@@ -81,7 +75,6 @@ private fun CardItem(
     startColor: Color,
     painterId: Int,
     modifierImage: Modifier,
-    context: Context
 ) {
     Card(
         modifier = Modifier
@@ -95,20 +88,20 @@ private fun CardItem(
             ) {
                 Column(modifier = Modifier.padding(10.dp)) {
                     Text(
-                        text = reminder.type.toLocalizedString(context),
+                        text = stringResource(id = reminder.type.toResourceId()),
                         style = TextStyle(
                             color = Color.White,
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold
                         )
                     )
-                    Text(text = "${context.getString(R.string.next_text)}: ${reminder.date}")
-                    Text(text = reminder.repetition.toLocalizedString(context))
+                    Text(text = "${stringResource(R.string.next_text)}: ${reminder.date}")
+                    Text(text = stringResource(id = reminder.repetition.toResourceId()))
                 }
                 Image(
                     contentScale = ContentScale.Crop,
                     painter = painterResource(id = painterId),
-                    contentDescription = reminder.type.toLocalizedString(context),
+                    contentDescription = stringResource(id = reminder.type.toResourceId()),
                     alpha = 0.5f,
                     modifier = modifierImage
                 )

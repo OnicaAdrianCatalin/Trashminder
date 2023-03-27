@@ -46,7 +46,7 @@ class HomeFragment : Fragment() {
             val state = rememberLazyListState()
             LazyColumn(horizontalAlignment = Alignment.CenterHorizontally, state = state) {
                 items(viewModel.reminderResponse.value?.reminders ?: emptyList()) {
-                    CustomItem(reminder = it, requireContext())
+                    CustomItem(reminder = it)
                 }
                 item {
                     IconButton(onClick = {

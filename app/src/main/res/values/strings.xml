@@ -27,9 +27,9 @@
     <string name="repetition"> Repetition</string>
     <string name="date_and_time_button">Date and time</string>
     <string name="trash_type_paper">Paper</string>
-    <string name="trash_type_metals">Metals</string>
+    <string name="trash_type_metal">Metals</string>
     <string name="trash_type_glass">Glass</string>
-    <string name="trash_type_residuals">Residuals</string>
+    <string name="trash_type_residual">Residuals</string>
     <string name="trash_type_plastic">Plastic</string>
     <string name="paper_and_carton">Paper and Carton</string>
     <string name="error">Error</string>
@@ -41,4 +41,6 @@
     <string name="time_period_monthly">Monthly </string>
     <string name="time_period_every_two_months">Every two months </string>
     <string name="next_text">Next</string>
+    <string name="no_internet_connection_validation">You are offline. Check your internet connection.</string>
+    <string name="server_not_responding_validation">Unable to establish connection with server</string>
 </resources>

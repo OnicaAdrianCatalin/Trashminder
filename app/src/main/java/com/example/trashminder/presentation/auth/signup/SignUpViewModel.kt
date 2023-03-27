@@ -10,6 +10,8 @@ import com.example.trashminder.presentation.auth.authUtils.assertFieldsNotEmpty
 import com.example.trashminder.presentation.auth.authUtils.onFailure
 import com.example.trashminder.presentation.auth.authUtils.onSuccess
 import com.example.trashminder.services.FirebaseAuthService
+import com.google.firebase.FirebaseException
+import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import kotlinx.coroutines.launch
 
@@ -25,21 +27,34 @@ class SignUpViewModel(private val authService: FirebaseAuthService) : ViewModel(
         lastName: String,
     ) {
         viewModelScope.launch {
-            if (assertFieldsNotEmpty(email, password, confirmPassword, firstName, lastName)) {
-                if (confirmPassword == password) {
-                    authService.register(email, password).onSuccess {
-                        _authResult.value = Result.Success(Unit)
-                    }.onFailure {
-                        if (it is FirebaseAuthUserCollisionException) {
-                            _authResult.value =
-                                Result.Failure(AuthErrors.EMAIL_ALREADY_IN_USE)
-                        }
-                    }
-                } else {
-                    _authResult.value = Result.Failure(AuthErrors.PASSWORD_MISMATCH)
-                }
-            }else{
+            if (!assertFieldsNotEmpty(email, password, confirmPassword, firstName, lastName)) {
                 _authResult.value = Result.Failure(AuthErrors.EMPTY_FIELDS)
+                return@launch
+            }
+
+            if (confirmPassword != password) {
+                _authResult.value = Result.Failure(AuthErrors.PASSWORD_MISMATCH)
+                return@launch
+            }
+
+            authService.register(email, password).onSuccess {
+                _authResult.value = Result.Success(Unit)
+            }.onFailure {
+                if (it is FirebaseAuthUserCollisionException) {
+                    _authResult.value = Result.Failure(AuthErrors.EMAIL_ALREADY_IN_USE)
+                }
+                if (it is FirebaseNetworkException) {
+                    _authResult.value =
+                        Result.Failure(
+                            AuthErrors.NO_INTERNET_CONNECTION
+                        )
+                }
+                if (it is FirebaseException) {
+                    _authResult.value =
+                        Result.Failure(
+                            AuthErrors.SERVER_NOT_RESPONDING
+                        )
+                }
             }
         }
     }

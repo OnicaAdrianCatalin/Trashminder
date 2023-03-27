@@ -50,6 +50,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
@@ -63,8 +64,7 @@ import com.example.trashminder.presentation.theme.lightBlack
 import com.example.trashminder.presentation.theme.lightGreen
 import com.example.trashminder.utils.TimePeriod
 import com.example.trashminder.utils.TrashType
-import com.example.trashminder.utils.toLocalizedString
-import com.example.trashminder.utils.toTrashType
+import com.example.trashminder.utils.toResourceId
 import java.util.Calendar
 import java.util.Date
 import kotlinx.coroutines.launch
@@ -91,7 +91,7 @@ class NewReminderFragment : Fragment() {
         val dateAndTimeDialogTrigger = remember { mutableStateOf(false) }
         val chosenDate = remember { mutableStateOf(getString(R.string.date_and_time_button)) }
         val timespan = remember { mutableStateOf<Int?>(null) }
-        val trashType = remember { mutableStateOf("") }
+        val trashType = remember { mutableStateOf(TrashType.Plastic) }
         val scaffoldState = rememberScaffoldState()
         val coroutineScope = rememberCoroutineScope()
         Scaffold(
@@ -126,8 +126,7 @@ class NewReminderFragment : Fragment() {
                             text = getString(R.string.save_button)
                         ) {
                             coroutineScope.launch {
-                                if (trashType.value.isEmpty() ||
-                                    timespan.value == null ||
+                                if (timespan.value == null ||
                                     chosenDate.value == getString(R.string.date_and_time_button)
                                 ) {
                                     scaffoldState.snackbarHostState.showSnackbar(
@@ -136,7 +135,7 @@ class NewReminderFragment : Fragment() {
                                     )
                                 } else {
                                     viewModel.createProfileOrAddData(
-                                        type = trashType.value.toTrashType(context = requireContext())!!,
+                                        type = trashType.value,
                                         date = chosenDate.value,
                                         repetition = TimePeriod.values()[timespan.value!!]
                                     )
@@ -220,7 +219,7 @@ class NewReminderFragment : Fragment() {
                                 }
                             )
                             Text(
-                                text = TimePeriod.values()[item].toLocalizedString(requireContext()),
+                                text = stringResource(id =TimePeriod.values()[item].toResourceId()),
                                 modifier = Modifier.padding(start = 6.dp)
                             )
                         }
@@ -261,12 +260,12 @@ class NewReminderFragment : Fragment() {
 
     @Composable
     private fun DropDownButton(
-        trashType: MutableState<String>,
+        trashType: MutableState<TrashType>,
         expanded: MutableState<Boolean>
     ) {
         Column {
             OutlinedTextField(
-                value = trashType.value, onValueChange = { trashType.value = it },
+                value = stringResource(id = trashType.value.toResourceId()), onValueChange = { },
                 modifier = Modifier
                     .padding(12.dp)
                     .size(width = 250.dp, height = 55.dp)
@@ -289,10 +288,10 @@ class NewReminderFragment : Fragment() {
             ) {
                 TrashType.values().forEach{ value ->
                     DropdownMenuItem(onClick = {
-                        trashType.value = value.toLocalizedString(requireContext())
+                        trashType.value = value
                         expanded.value = false
                     }) {
-                        Text(text = value.toLocalizedString(requireContext()))
+                        Text(text = stringResource(id = value.toResourceId()))
                     }
                 }
             }
