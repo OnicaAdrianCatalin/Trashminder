@@ -21,26 +21,46 @@ class TrashminderNotifications() {
     private lateinit var alarmManager: AlarmManager
     private lateinit var pendingIntent: PendingIntent
 
-    @RequiresApi(Build.VERSION_CODES.M)
-    fun setAlarm(time: Long, context: Context, id: Int, type: String, repetition: String) {
+    fun setRepetitiveAlarm(time: Long, context: Context, id: Int, type: String?, repetition: String?) {
 
         alarmManager = context.getSystemService(ComponentActivity.ALARM_SERVICE) as AlarmManager
 
         val intent = Intent(context, AlarmReceiver::class.java).apply {
             putExtra("type", type)
+            putExtra("repetition", repetition)
         }
 
         pendingIntent = PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
-        when(repetition){
+       /* when(repetition){
             "Zilnic" -> alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, time,AlarmManager.INTERVAL_DAY, pendingIntent)
             "Saptamanal" -> alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, time, AlarmManager.INTERVAL_DAY*7, pendingIntent)
             "La 2 saptamani" -> alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, time, 2*6604800000, pendingIntent)
             "Lunar" -> alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, time, getDuration(), pendingIntent)
-        }
+        }*/
+
+        setAlarm(time, pendingIntent)
 
         Log.d("Main", "Alarm set successfuly")
 
+    }
+
+    private fun setAlarm(timeInMillis: Long, pendingIntent: PendingIntent) {
+        alarmManager.let {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    timeInMillis,
+                    pendingIntent
+                )
+            } else {
+                alarmManager.setExact(
+                    AlarmManager.RTC_WAKEUP,
+                    timeInMillis,
+                    pendingIntent
+                )
+            }
+        }
     }
 
     private fun getDuration(): Long {

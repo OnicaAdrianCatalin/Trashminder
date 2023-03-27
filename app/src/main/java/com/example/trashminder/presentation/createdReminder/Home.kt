@@ -94,7 +94,7 @@ fun setNotifications(reminder: Reminder, context: Context) {
 
         Log.d("Main", "Id to int= ${timeInMilliseconds.toInt()}")
 
-        TrashminderNotifications().setAlarm(timeSec,context,timeInMilliseconds.toInt(), reminder.type, reminder.repetition)
+        TrashminderNotifications().setRepetitiveAlarm(timeSec,context,timeInMilliseconds.toInt(), reminder.type, reminder.repetition)
     }
 }
 

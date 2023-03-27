@@ -19,7 +19,7 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.compose.rememberNavController
 import androidx.work.*
 import androidx.work.ExistingWorkPolicy.REPLACE
-import com.example.trashminder.NotifyWork.Companion.NOTIFICATION_WORK
+
 import com.example.trashminder.presentation.navigation.RootNavigationGraph
 import com.example.trashminder.presentation.theme.TrashminderTheme
 import com.example.trashminder.utils.*
@@ -40,31 +40,6 @@ class MainActivity : ComponentActivity() {
             TrashminderTheme {
                 RootNavigationGraph(navController = rememberNavController())
 
-                /*var hasNotificationPermission by remember {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        mutableStateOf(
-                            ContextCompat.checkSelfPermission(
-                                context,
-                                Manifest.permission.POST_NOTIFICATIONS
-                            ) == PackageManager.PERMISSION_GRANTED
-                        )
-                    } else {
-                        mutableStateOf(true)
-                    }
-                }
-
-                val launcher = rememberLauncherForActivityResult(
-                    contract = ActivityResultContracts.RequestPermission(),
-                    onResult = { isGranted ->
-                        hasNotificationPermission = isGranted
-                    }
-                )
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    SideEffect {
-                        launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                    }
-                }*/
             }
         }
 
@@ -97,17 +72,6 @@ class MainActivity : ComponentActivity() {
 
                 notificationManager.createNotificationChannel(channel)
             }
-        }
-
-        fun scheduleNotification(delay: Long, data: Data) {
-            val notificationWork = OneTimeWorkRequest.Builder(NotifyWork::class.java)
-                .setInitialDelay(0, MILLISECONDS).setInputData(data).build()
-
-            Log.d("Main", "Intra in main")
-
-            val instanceWorkManager = WorkManager.getInstance(this)
-            instanceWorkManager.beginUniqueWork(NOTIFICATION_WORK, REPLACE, notificationWork)
-                .enqueue()
         }
     }
 }

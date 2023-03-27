@@ -1,19 +1,15 @@
 package com.example.trashminder.utils
 
-import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.os.Handler
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.getSystemService
-import com.example.trashminder.MainActivity
 import com.example.trashminder.R
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent?) {
@@ -22,6 +18,7 @@ class AlarmReceiver : BroadcastReceiver() {
         val chanelName = "message_channel"
         val channelId = "message_id"
         val type= intent?.getStringExtra("type")
+        val repetition= intent?.getStringExtra("repetition")
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel =
@@ -29,11 +26,25 @@ class AlarmReceiver : BroadcastReceiver() {
             manager.createNotificationChannel(channel)
         }
 
+        setRepetitiveAlarm(TrashminderNotifications(), context, type, repetition )
+
         val builder = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(type)
             .setContentText("Este timpul sa scoti gunoiul.")
         manager.notify(1, builder.build())
+    }
+
+    private fun setRepetitiveAlarm(
+        trashminderNotifications: TrashminderNotifications,
+        context: Context,
+        type: String?,
+        repetition: String?
+    ) {
+        val cal = Calendar.getInstance().apply {
+            this.timeInMillis = timeInMillis + TimeUnit.HOURS.toMillis(24)
+        }
+        trashminderNotifications.setRepetitiveAlarm(cal.timeInMillis, context, cal.timeInMillis.toInt(), type, repetition)
     }
 
 }
