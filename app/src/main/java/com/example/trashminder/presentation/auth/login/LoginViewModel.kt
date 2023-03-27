@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.trashminder.presentation.auth.authUtils.AuthErrors
 import com.example.trashminder.presentation.auth.authUtils.Result
-import com.example.trashminder.presentation.auth.authUtils.assertFieldsNotEmpty
+import com.example.trashminder.presentation.auth.authUtils.assertFieldsEmpty
 import com.example.trashminder.presentation.auth.authUtils.onFailure
 import com.example.trashminder.presentation.auth.authUtils.onSuccess
 import com.example.trashminder.services.FirebaseAuthService
@@ -23,32 +23,26 @@ class LoginViewModel(private val authService: FirebaseAuthService) : ViewModel()
 
     fun signInWithEmailAndPassword(email: String, password: String) {
         viewModelScope.launch {
-            if (!assertFieldsNotEmpty(email, password)) {
+            if (!assertFieldsEmpty(email, password)) {
                 _authResult.value = Result.Failure(AuthErrors.EMPTY_FIELDS)
                 return@launch
             }
                 authService.login(email, password).onSuccess {
                     _authResult.value = Result.Success(Unit)
                 }.onFailure {
-                    if (it is FirebaseAuthInvalidCredentialsException) {
-                        _authResult.value =
-                            Result.Failure(
-                                AuthErrors.EMAIL_OR_PASSWORD_INCORRECT
-                            )
-                    }
-                    if (it is FirebaseNetworkException) {
-                        _authResult.value =
-                            Result.Failure(
-                                AuthErrors.NO_INTERNET_CONNECTION
-                            )
-                    }
-                       if (it is FirebaseException) {
-                        _authResult.value =
-                            Result.Failure(
-                                AuthErrors.SERVER_NOT_RESPONDING
-                            )
-                    }
+                   handleError(it as FirebaseException)
                 }
             }
         }
+
+    private fun handleError(exception: FirebaseException) {
+        when (exception) {
+            is FirebaseAuthInvalidCredentialsException -> _authResult.value =
+                Result.Failure(AuthErrors.EMAIL_OR_PASSWORD_INCORRECT)
+            is FirebaseNetworkException -> _authResult.value =
+                Result.Failure(AuthErrors.NO_INTERNET_CONNECTION)
+            else -> _authResult.value =
+                Result.Failure(AuthErrors.SERVER_NOT_RESPONDING)
+        }
     }
+}

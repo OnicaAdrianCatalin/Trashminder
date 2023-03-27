@@ -10,9 +10,9 @@ import org.koin.dsl.module
 val appModule = module {
     single<FirebaseAuthService> { FirebaseAuthServiceImpl() }
     viewModel {
-        LoginViewModel(FirebaseAuthServiceImpl())
+        LoginViewModel(authService = get())
     }
     viewModel {
-        SignUpViewModel(FirebaseAuthServiceImpl())
+        SignUpViewModel(authService = get())
     }
 }
