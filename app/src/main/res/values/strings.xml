@@ -1,8 +1,46 @@
 <resources>
     <string name="app_name">Trashminder</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="menu_home_fragment">Home</string>
     <string name="menu_calendar_fragment">Calendar</string>
     <string name="menu_settings_fragment">Settings</string>
+    <string name="fields_cannot_be_not_empty_validation">Fields cannot be empty</string>
+    <string name="email_or_password_incorrect_validation">Email or password are incorrect</string>
+    <string name="no_account_text">Don\'t have an account? Register here!</string>
+    <string name="login_text">Login </string>
+    <string name="register_text">Register</string>
+    <string name="email_label">Email </string>
+    <string name="password_label">Password </string>
+    <string name="password_confirmation_label">Confirm password</string>
+    <string name="enter_account_text">Enter Account </string>
+    <string name="create_account_text">Create an account </string>
+    <string name="last_name_label">Last name</string>
+    <string name="first_name_label">First name</string>
+    <string name="register_already_have_an_account_text">Already have an account? Register here!</string>
+    <string name="passwords_missmatch_validation"> Passwords are not matching</string>
+    <string name="email_already_exists_validation"> Email already exists</string>
+    <string name="calendar_text"> CALENDAR</string>
+    <string name="add_button_content_description">" Add button"</string>
+    <string name="log_out_button">Logout</string>
+    <string name="choose_trash_type"> Choose trash type</string>
+    <string name="save_button"> Save</string>
+    <string name="repetition"> Repetition</string>
+    <string name="date_and_time_button">Date and time</string>
+    <string name="trash_type_paper">Paper</string>
+    <string name="trash_type_metal">Metal</string>
+    <string name="trash_type_glass">Glass</string>
+    <string name="trash_type_residual">Residual</string>
+    <string name="trash_type_plastic">Plastic</string>
+    <string name="paper_and_carton">Paper and Carton</string>
+    <string name="error">Error</string>
+    <string name="time_period_daily">Daily</string>
+    <string name="time_period_working_days">Working days</string>
+    <string name="time_period_weekends">Weekends</string>
+    <string name="time_period_weekly">Weekly</string>
+    <string name="time_period_every_two_weeks">Every 2 weeks </string>
+    <string name="time_period_monthly">Monthly </string>
+    <string name="time_period_every_two_months">Every two months </string>
+    <string name="next_text">Next</string>
+    <string name="no_internet_connection_validation">You are offline. Check your internet connection.</string>
+    <string name="server_not_responding_validation">Unable to establish connection with server</string>
 </resources>

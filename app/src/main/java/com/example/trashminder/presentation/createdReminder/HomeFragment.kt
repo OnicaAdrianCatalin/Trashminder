@@ -54,7 +54,7 @@ class HomeFragment : Fragment() {
                     }) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_add_circle),
-                            contentDescription = "Add button",
+                            contentDescription = getString(R.string.add_button_content_description),
                             modifier = Modifier.size(90.dp),
                             tint = Color.LightGray
                         )

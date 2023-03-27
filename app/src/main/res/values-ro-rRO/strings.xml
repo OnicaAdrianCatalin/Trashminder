@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Trashminder</string>
+    <string name="menu_home_fragment">Home</string>
+    <string name="menu_calendar_fragment">Calendar</string>
+    <string name="menu_settings_fragment">Settings</string>
+    <string name="fields_cannot_be_not_empty_validation">Campurile nu pot fi necompletate</string>
+    <string name="email_or_password_incorrect_validation">Emailul sau parola sunt incorecte</string>
+    <string name="no_account_text">Nu ai cont? Inregistreaza-te!</string>
+    <string name="login_text">Autentificare</string>
+    <string name="register_text">Inregistrare</string>
+    <string name="email_label">Email</string>
+    <string name="password_label">Parola</string>
+    <string name="password_confirmation_label">Confirma parola</string>
+    <string name="enter_account_text">Intra in cont</string>
+    <string name="create_account_text">Creeaza un cont</string>
+    <string name="last_name_label">Nume</string>
+    <string name="first_name_label">Prenume</string>
+    <string name="register_already_have_an_account_text">Ai deja un cont? Inregistreaza-te!</string>
+    <string name="passwords_missmatch_validation">Parolele nu se potrivesc</string>
+    <string name="email_already_exists_validation">Emailul deja exista</string>
+    <string name="calendar_text">CALENDAR</string>
+    <string name="add_button_content_description">Add button</string>
+    <string name="log_out_button">Iesi din cont</string>
+    <string name="choose_trash_type">Alege tipul de gunoi</string>
+    <string name="save_button">Salveaza</string>
+    <string name="repetition">Repetare</string>
+    <string name="date_and_time_button">Data si ora</string>
+    <string name="trash_type_paper">Hartie</string>
+    <string name="trash_type_metal">Metal</string>
+    <string name="trash_type_glass">Sticla</string>
+    <string name="trash_type_residual">Menajer</string>
+    <string name="trash_type_plastic">Plastic</string>
+    <string name="error">Error</string>
+    <string name="paper_and_carton">Hartie si Carton</string>
+    <string name="time_period_daily">Zilnic</string>
+    <string name="time_period_working_days">Zile Lucratoare</string>
+    <string name="time_period_weekends">Weekend-uri</string>
+    <string name="time_period_weekly">Saptamanal</string>
+    <string name="time_period_every_two_weeks">La 2 saptamani</string>
+    <string name="time_period_monthly">Lunar</string>
+    <string name="time_period_every_two_months">La 2 luni</string>
+    <string name="next_text">Urmator</string>
+    <string name="no_internet_connection_validation">Esti offline. Verificați conexiunea la internet.</string>
+    <string name="server_not_responding_validation">Eroare de conectivitate cu serverul</string>
+</resources>

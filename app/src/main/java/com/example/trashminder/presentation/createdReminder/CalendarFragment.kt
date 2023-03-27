@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
+import com.example.trashminder.R
 
 class CalendarFragment : Fragment() {
 
@@ -33,7 +34,7 @@ class CalendarFragment : Fragment() {
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            Text(text = "CALENDAR")
+            Text(text = getString(R.string.calendar_text))
         }
     }
 }
