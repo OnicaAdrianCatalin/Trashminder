@@ -28,14 +28,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.fragment.findNavController
 import com.example.trashminder.R
 import com.example.trashminder.presentation.auth.authUtils.AuthErrors
+import com.example.trashminder.presentation.auth.authUtils.getAuthError
 import com.example.trashminder.presentation.auth.authUtils.onFailure
 import com.example.trashminder.presentation.auth.authUtils.onSuccess
 import com.example.trashminder.presentation.theme.black
@@ -47,6 +46,7 @@ import com.example.trashminder.utils.CustomTextField
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.get
 
 class LoginFragment : Fragment() {
     override fun onCreateView(
@@ -77,7 +77,7 @@ class LoginFragment : Fragment() {
     fun LoginScreen() {
         val email = remember { mutableStateOf("") }
         val password = remember { mutableStateOf("") }
-        val viewModel = viewModel<LoginViewModel>()
+        val viewModel = get<LoginViewModel>()
         val errorText = remember { mutableStateOf("") }
         val snackState = remember { SnackbarHostState() }
         val coroutineScope = rememberCoroutineScope()
@@ -98,18 +98,17 @@ class LoginFragment : Fragment() {
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "Intra in cont",
+                    text = getString(R.string.enter_account_text),
                     modifier = Modifier.padding(12.dp),
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp
                 )
                 CustomTextField(
-                    label = "Email",
+                    label = getString(R.string.email_label),
                     textFieldValue = email,
-                    visualTransformation = VisualTransformation.None
                 )
                 CustomTextField(
-                    label = "Parola",
+                    label = getString(R.string.password_label),
                     textFieldValue = password,
                     visualTransformation = PasswordVisualTransformation()
                 )
@@ -136,10 +135,10 @@ class LoginFragment : Fragment() {
                     elevation = ButtonDefaults.elevation(0.dp),
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
                 ) {
-                    Text(text = "Autentificare", color = Color.White)
+                    Text(text = getString(R.string.login_text), color = Color.White)
                 }
                 Text(
-                    text = "Nu ai cont? Inregistreaza-te",
+                    text = getString(R.string.no_account_text),
                     modifier = Modifier.clickable {
                         findNavController().navigate(R.id.signUpFragment)
                     }
@@ -160,15 +159,7 @@ class LoginFragment : Fragment() {
                 findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
             }
             .onFailure { error: AuthErrors ->
-                when (error) {
-                    AuthErrors.EMPTY_FIELDS -> {
-                        errorText.value = "Fields cannot be empty"
-                    }
-                    AuthErrors.EMAIL_OR_PASSWORD_INCORRECT -> {
-                        errorText.value = "Email or password are incorrect"
-                    }
-                    else -> {}
-                }
+              errorText.value = error.getAuthError(requireContext())
             }
         }
     }

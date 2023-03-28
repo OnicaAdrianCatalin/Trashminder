@@ -30,14 +30,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.fragment.findNavController
 import com.example.trashminder.R
 import com.example.trashminder.presentation.auth.authUtils.AuthErrors
+import com.example.trashminder.presentation.auth.authUtils.getAuthError
 import com.example.trashminder.presentation.auth.authUtils.onFailure
 import com.example.trashminder.presentation.auth.authUtils.onSuccess
 import com.example.trashminder.presentation.theme.black
@@ -48,6 +47,7 @@ import com.example.trashminder.utils.CustomSnackBar
 import com.example.trashminder.utils.CustomTextField
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.get
 
 class SignUpFragment : Fragment() {
 
@@ -65,7 +65,7 @@ class SignUpFragment : Fragment() {
 
     @Composable
     fun SignUpScreen() {
-        val viewModel = viewModel<SignUpViewModel>()
+        val viewModel = get<SignUpViewModel>()
         val firstName = remember {
             mutableStateOf("")
         }
@@ -105,33 +105,30 @@ class SignUpFragment : Fragment() {
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "Creeaza un cont",
+                    text = getString(R.string.create_account_text),
                     modifier = Modifier.padding(8.dp),
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp
                 )
                 CustomTextField(
-                    label = "Nume",
+                    label = getString(R.string.first_name_label),
                     textFieldValue = firstName,
-                    visualTransformation = VisualTransformation.None
                 )
                 CustomTextField(
-                    label = "Prenume",
+                    label = getString(R.string.last_name_label),
                     textFieldValue = lastName,
-                    visualTransformation = VisualTransformation.None
                 )
                 CustomTextField(
-                    label = "Email",
+                    label = getString(R.string.email_label),
                     textFieldValue = email,
-                    visualTransformation = VisualTransformation.None
                 )
                 CustomTextField(
-                    label = "Parola",
+                    label = getString(R.string.password_label),
                     textFieldValue = password,
                     visualTransformation = PasswordVisualTransformation()
                 )
                 CustomTextField(
-                    label = "Confirmare parola",
+                    label = getString(R.string.password_confirmation_label),
                     textFieldValue = passwordConfirmation,
                     visualTransformation = PasswordVisualTransformation()
                 )
@@ -164,11 +161,11 @@ class SignUpFragment : Fragment() {
                     elevation = ButtonDefaults.elevation(0.dp),
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
                 ) {
-                    Text(text = "Inregistrare", color = Color.White)
+                    Text(text = getString(R.string.register_text), color = Color.White)
                 }
 
                 Text(
-                    text = "Ai deja un cont? Autentificare",
+                    text = getString(R.string.register_already_have_an_account_text),
                     modifier = Modifier
                         .padding(bottom = 50.dp)
                         .clickable {
@@ -199,18 +196,7 @@ class SignUpFragment : Fragment() {
         viewModel.authResult.value.onSuccess {
             findNavController().navigate(R.id.action_signUpFragment_to_newReminderFragment)
         }.onFailure { error: AuthErrors ->
-            when (error) {
-                AuthErrors.PASSWORD_MISMATCH -> {
-                    authError.value = "Passwords are not matching"
-                }
-                AuthErrors.EMPTY_FIELDS -> {
-                    authError.value = "Fields cannot be empty"
-                }
-                AuthErrors.EMAIL_ALREADY_IN_USE -> {
-                    authError.value = "The Email already exists"
-                }
-                else -> {}
-            }
+            authError.value = error.getAuthError(requireContext())
         }
     }
 }
