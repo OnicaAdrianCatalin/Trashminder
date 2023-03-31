@@ -38,11 +38,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -209,7 +205,7 @@ class NewReminderFragment : Fragment() {
                         .padding(start = 30.dp)
                         .fillMaxWidth()
                 ) {
-                    items(count = TimePeriod.values().size) { item->
+                    items(count = TimePeriod.values().size) { item ->
                         Row(modifier = Modifier.padding(12.dp)) {
                             RadioButton(
                                 selected = timespan.value == item,
@@ -219,7 +215,7 @@ class NewReminderFragment : Fragment() {
                                 }
                             )
                             Text(
-                                text = stringResource(id =TimePeriod.values()[item].toResourceId()),
+                                text = stringResource(id = TimePeriod.values()[item].toResourceId()),
                                 modifier = Modifier.padding(start = 6.dp)
                             )
                         }
@@ -243,13 +239,30 @@ class NewReminderFragment : Fragment() {
         val datePickerDialog = DatePickerDialog(
             context,
             { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
-                chosenDate.value = "$mDayOfMonth/${mMonth + 1}/$mYear"
+                var newDay = "$mDayOfMonth"
+                var newMonth = "${mMonth + 1}"
+                if (mDayOfMonth < 10) {
+                    newDay = "0$mDayOfMonth"
+                }
+                if (mMonth < 10) {
+                    newMonth = "0${mMonth + 1}"
+                }
+                chosenDate.value = "$newDay/$newMonth/$mYear"
             }, year, month, day
         )
         val timePickerDialog = TimePickerDialog(
             context,
             { _, mHour: Int, mMinute: Int ->
-                chosenDate.value += " $mHour:$mMinute"
+                var newHour = "$mHour"
+                var newMinutes = "$mMinute"
+
+                if (mHour < 10) {
+                    newHour = "0$mHour"
+                }
+                if (mMinute < 10) {
+                    newMinutes = "0$mMinute"
+                }
+                chosenDate.value += " $newHour:$newMinutes"
             }, hour, minutes, false
         )
         datePickerDialog.show()
@@ -286,7 +299,7 @@ class NewReminderFragment : Fragment() {
                 onDismissRequest = { expanded.value = false },
                 modifier = Modifier.wrapContentSize()
             ) {
-                TrashType.values().forEach{ value ->
+                TrashType.values().forEach { value ->
                     DropdownMenuItem(onClick = {
                         trashType.value = value
                         expanded.value = false
