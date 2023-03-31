@@ -49,12 +49,12 @@ class AlarmReceiver : BroadcastReceiver() {
     ) {
         val cal = Calendar.getInstance().apply {
             when (repetition) {
-                TimePeriod.DAILY.name -> this.timeInMillis =
-                    timeInMillis + TimeUnit.HOURS.toMillis(24)
                 TimePeriod.WEEKLY.name -> this.timeInMillis =
                     timeInMillis + TimeUnit.DAYS.toMillis(7)
                 TimePeriod.EVERY_TWO_WEEKS.name -> this.timeInMillis =
                     timeInMillis + TimeUnit.DAYS.toMillis(14)
+                TimePeriod.EVERY_THREE_WEEKS.name -> this.timeInMillis =
+                    timeInMillis + TimeUnit.DAYS.toMillis(21)
                 TimePeriod.MONTHLY.name -> this.timeInMillis =
                     timeInMillis + getMonthDuration()
             }

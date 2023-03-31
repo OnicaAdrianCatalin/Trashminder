@@ -44,4 +44,5 @@
     <string name="no_internet_connection_validation">You are offline. Check your internet connection.</string>
     <string name="server_not_responding_validation">Unable to establish connection with server</string>
     <string name="notification_content_text">It\'s time to take your trash out.</string>
+    <string name="time_period_every_three_weeks">Every 3 weeks</string>
 </resources>
