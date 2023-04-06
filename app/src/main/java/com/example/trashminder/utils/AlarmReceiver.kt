@@ -7,14 +7,13 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.example.trashminder.R
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
 class AlarmReceiver : BroadcastReceiver() {
-    @RequiresApi(Build.VERSION_CODES.M)
+
     override fun onReceive(context: Context, intent: Intent?) {
 
         val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -40,7 +39,6 @@ class AlarmReceiver : BroadcastReceiver() {
         manager.notify(1, builder.build())
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
     private fun setRepetitiveAlarm(
         notifications: Notifications,
         context: Context,
