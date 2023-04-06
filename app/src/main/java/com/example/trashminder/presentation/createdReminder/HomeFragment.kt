@@ -11,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
@@ -35,16 +34,15 @@ import androidx.navigation.fragment.findNavController
 import com.example.trashminder.R
 import com.example.trashminder.model.Reminder
 import com.example.trashminder.utils.Notifications
+import org.threeten.bp.LocalDateTime
+import org.threeten.bp.ZoneOffset
+import org.threeten.bp.format.DateTimeFormatter
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Locale
 
-
 class HomeFragment : Fragment() {
-    @RequiresApi(Build.VERSION_CODES.O)
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -57,7 +55,6 @@ class HomeFragment : Fragment() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     @Composable
     fun HomeScreen() {
         val viewModel = viewModel<HomeScreenViewModel>()
@@ -70,7 +67,7 @@ class HomeFragment : Fragment() {
                 items(viewModel.reminderResponse.value?.reminders ?: emptyList()) {
                     CustomItem(reminder = it)
 
-                    CheckNotificationPermission(it, context)
+                    NotificationPermissionDialog(it, context)
                 }
                 item {
                     IconButton(onClick = {
@@ -88,9 +85,8 @@ class HomeFragment : Fragment() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     @Composable
-    private fun CheckNotificationPermission(it: Reminder, context: Context) {
+    private fun NotificationPermissionDialog(it: Reminder, context: Context) {
 
         var hasNotificationPermission by remember {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -119,14 +115,12 @@ class HomeFragment : Fragment() {
         }
 
         if (hasNotificationPermission) {
-            setNotifications(it, context)
+            calculateNotificationDate(it, context)
         }
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
-fun setNotifications(reminder: Reminder, context: Context) {
-
+fun calculateNotificationDate(reminder: Reminder, context: Context) {
     val formatter = DateTimeFormatter.ofPattern(
         "dd/MM/yyyy HH:mm",
         Locale.ENGLISH
@@ -147,12 +141,22 @@ fun setNotifications(reminder: Reminder, context: Context) {
         val delay = timeInMilliseconds - currentTimeInMills
         val timeSec = System.currentTimeMillis() + delay
 
-        Notifications().setRepetitiveAlarm(
-            timeSec,
-            context,
-            timeInMilliseconds.toInt(),
-            reminder.type.name,
-            reminder.repetition.name
-        )
+        setNotifications(reminder, context, timeSec, timeInMilliseconds)
     }
+}
+
+fun setNotifications(
+    reminder: Reminder,
+    context: Context,
+    timeSec: Long,
+    timeInMilliseconds: Long
+) {
+
+    Notifications().setRepetitiveAlarm(
+        timeSec,
+        context,
+        timeInMilliseconds.toInt(),
+        reminder.type.name,
+        reminder.repetition.name
+    )
 }

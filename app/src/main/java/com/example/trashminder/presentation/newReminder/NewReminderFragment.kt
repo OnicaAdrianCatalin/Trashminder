@@ -238,37 +238,52 @@ class NewReminderFragment : Fragment() {
 
         val datePickerDialog = DatePickerDialog(
             context,
-            { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
-                var newDay = "$mDayOfMonth"
-                var newMonth = "${mMonth + 1}"
-                if (mDayOfMonth < 10) {
-                    newDay = "0$mDayOfMonth"
-                }
-                if (mMonth < 10) {
-                    newMonth = "0${mMonth + 1}"
-                }
-                chosenDate.value = "$newDay/$newMonth/$mYear"
+            { _: DatePicker, selectedYear: Int, selectedMonth: Int, selectedDayOfMonth: Int ->
+                chosenDate.value =
+                    setDateCorrectFormat(selectedMonth, selectedDayOfMonth, selectedYear)
             }, year, month, day
         )
         val timePickerDialog = TimePickerDialog(
             context,
-            { _, mHour: Int, mMinute: Int ->
-                var newHour = "$mHour"
-                var newMinutes = "$mMinute"
-
-                if (mHour < 10) {
-                    newHour = "0$mHour"
-                }
-                if (mMinute < 10) {
-                    newMinutes = "0$mMinute"
-                }
-                chosenDate.value += " $newHour:$newMinutes"
+            { _, selectedHour: Int, selectedMinute: Int ->
+                chosenDate.value += setTimeCorrectFormat(selectedHour, selectedMinute)
             }, hour, minutes, false
         )
         datePickerDialog.show()
         datePickerDialog.setOnDismissListener {
             timePickerDialog.show()
         }
+    }
+
+    private fun setDateCorrectFormat(
+        selectedMonth: Int,
+        selectedDayOfMonth: Int,
+        selectedYear: Int
+    ): String {
+        var newDay = "$selectedDayOfMonth"
+        var newMonth = "${selectedMonth + 1}"
+        if (selectedDayOfMonth < 10) {
+            newDay = "0$selectedDayOfMonth"
+        }
+        if (selectedMonth < 10) {
+            newMonth = "0${selectedMonth + 1}"
+        }
+
+        return "$newDay/$newMonth/$selectedYear"
+    }
+
+    private fun setTimeCorrectFormat(selectedHour: Int, selectedMinute: Int): String {
+        var newHour = "$selectedHour"
+        var newMinutes = "$selectedMinute"
+
+        if (selectedHour < 10) {
+            newHour = "0$selectedHour"
+        }
+        if (selectedMinute < 10) {
+            newMinutes = "0$selectedMinute"
+        }
+
+        return " $newHour:$newMinutes"
     }
 
     @Composable

@@ -18,16 +18,16 @@ class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent?) {
 
         val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val chanelName = "message_channel"
-        val channelId = "message_id"
-        val type = intent?.getStringExtra("type")
-        val repetition = intent?.getStringExtra("repetition")
+        val channelName = CHANNEL_NAME
+        val channelId = CHANNEL_ID
+        val type = intent?.getStringExtra(REMINDER_TYPE)
+        val repetition = intent?.getStringExtra(REMINDER_REPETITION)
 
         Log.d("Notifications", "type= $type, repetition= $repetition")
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel =
-                NotificationChannel(channelId, chanelName, NotificationManager.IMPORTANCE_DEFAULT)
+                NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT)
             manager.createNotificationChannel(channel)
         }
 
@@ -72,13 +72,13 @@ class AlarmReceiver : BroadcastReceiver() {
     private fun getMonthDuration(): Long {
         val cal: Calendar = Calendar.getInstance()
         val maximumDay: Int = cal.getActualMaximum(Calendar.DAY_OF_MONTH)
-        var daysInMillis = 0L
-        when (maximumDay) {
-            28 -> daysInMillis = TimeUnit.DAYS.toMillis(28)
-            29 -> daysInMillis = TimeUnit.DAYS.toMillis(29)
-            30 -> daysInMillis = TimeUnit.DAYS.toMillis(30)
-            31 -> daysInMillis = TimeUnit.DAYS.toMillis(31)
-        }
-        return daysInMillis
+        return TimeUnit.DAYS.toMillis(maximumDay.toLong())
+    }
+
+    companion object {
+        private const val CHANNEL_ID = "TrashMinderChannel"
+        private const val CHANNEL_NAME = "TrashMinderNotifications"
+        private const val REMINDER_TYPE = "type"
+        private const val REMINDER_REPETITION = "repetition"
     }
 }

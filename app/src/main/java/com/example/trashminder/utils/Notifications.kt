@@ -7,14 +7,12 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import androidx.activity.ComponentActivity
-import androidx.annotation.RequiresApi
 
 class Notifications {
 
     private lateinit var alarmManager: AlarmManager
     private lateinit var pendingIntent: PendingIntent
 
-    @RequiresApi(Build.VERSION_CODES.M)
     fun setRepetitiveAlarm(
         time: Long,
         context: Context,
@@ -26,8 +24,8 @@ class Notifications {
         alarmManager = context.getSystemService(ComponentActivity.ALARM_SERVICE) as AlarmManager
 
         val intent = Intent(context, AlarmReceiver::class.java).apply {
-            putExtra("type", type)
-            putExtra("repetition", repetition)
+            putExtra(REMINDER_TYPE, type)
+            putExtra(REMINDER_REPETITION, repetition)
         }
 
         pendingIntent = PendingIntent.getBroadcast(
@@ -58,5 +56,10 @@ class Notifications {
                 )
             }
         }
+    }
+
+    companion object {
+        private const val REMINDER_TYPE = "type"
+        private const val REMINDER_REPETITION = "repetition"
     }
 }
