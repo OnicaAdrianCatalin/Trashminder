@@ -38,11 +38,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -209,7 +205,7 @@ class NewReminderFragment : Fragment() {
                         .padding(start = 30.dp)
                         .fillMaxWidth()
                 ) {
-                    items(count = TimePeriod.values().size) { item->
+                    items(count = TimePeriod.values().size) { item ->
                         Row(modifier = Modifier.padding(12.dp)) {
                             RadioButton(
                                 selected = timespan.value == item,
@@ -219,7 +215,7 @@ class NewReminderFragment : Fragment() {
                                 }
                             )
                             Text(
-                                text = stringResource(id =TimePeriod.values()[item].toResourceId()),
+                                text = stringResource(id = TimePeriod.values()[item].toResourceId()),
                                 modifier = Modifier.padding(start = 6.dp)
                             )
                         }
@@ -242,20 +238,52 @@ class NewReminderFragment : Fragment() {
 
         val datePickerDialog = DatePickerDialog(
             context,
-            { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
-                chosenDate.value = "$mDayOfMonth/${mMonth + 1}/$mYear"
+            { _: DatePicker, selectedYear: Int, selectedMonth: Int, selectedDayOfMonth: Int ->
+                chosenDate.value =
+                    setDateCorrectFormat(selectedMonth, selectedDayOfMonth, selectedYear)
             }, year, month, day
         )
         val timePickerDialog = TimePickerDialog(
             context,
-            { _, mHour: Int, mMinute: Int ->
-                chosenDate.value += " $mHour:$mMinute"
+            { _, selectedHour: Int, selectedMinute: Int ->
+                chosenDate.value += setTimeCorrectFormat(selectedHour, selectedMinute)
             }, hour, minutes, false
         )
         datePickerDialog.show()
         datePickerDialog.setOnDismissListener {
             timePickerDialog.show()
         }
+    }
+
+    private fun setDateCorrectFormat(
+        selectedMonth: Int,
+        selectedDayOfMonth: Int,
+        selectedYear: Int
+    ): String {
+        var newDay = "$selectedDayOfMonth"
+        var newMonth = "${selectedMonth + 1}"
+        if (selectedDayOfMonth < 10) {
+            newDay = "0$selectedDayOfMonth"
+        }
+        if (selectedMonth < 10) {
+            newMonth = "0${selectedMonth + 1}"
+        }
+
+        return "$newDay/$newMonth/$selectedYear"
+    }
+
+    private fun setTimeCorrectFormat(selectedHour: Int, selectedMinute: Int): String {
+        var newHour = "$selectedHour"
+        var newMinutes = "$selectedMinute"
+
+        if (selectedHour < 10) {
+            newHour = "0$selectedHour"
+        }
+        if (selectedMinute < 10) {
+            newMinutes = "0$selectedMinute"
+        }
+
+        return " $newHour:$newMinutes"
     }
 
     @Composable
@@ -286,7 +314,7 @@ class NewReminderFragment : Fragment() {
                 onDismissRequest = { expanded.value = false },
                 modifier = Modifier.wrapContentSize()
             ) {
-                TrashType.values().forEach{ value ->
+                TrashType.values().forEach { value ->
                     DropdownMenuItem(onClick = {
                         trashType.value = value
                         expanded.value = false
