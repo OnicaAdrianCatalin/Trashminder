@@ -2,6 +2,7 @@ package com.example.trashminder.utils
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -9,8 +10,9 @@ import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.trashminder.R
-import java.util.Calendar
+import java.util.*
 import java.util.concurrent.TimeUnit
+
 
 class AlarmReceiver : BroadcastReceiver() {
 
@@ -30,12 +32,31 @@ class AlarmReceiver : BroadcastReceiver() {
             manager.createNotificationChannel(channel)
         }
 
-        setRepetitiveAlarm(Notifications(), context, type, repetition)
+        if (!Snooze.isSnoozed) {
+            setRepetitiveAlarm(Notifications(), context, type, repetition)
+        } else {
+            Snooze.isSnoozed = false
+        }
+
+        val snoozeIntent = PendingIntent.getBroadcast(
+            context,
+            2,
+            Intent(context, SnoozeNotificationReceiver::class.java).apply {
+                putExtra(SNOOZE_TYPE, type)
+                putExtra(SNOOZE_REPETITION, repetition)
+            },
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
 
         val builder = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(type)
             .setContentText(context.getString(R.string.notification_content_text))
+            .addAction(
+                R.drawable.ic_baseline_snooze_24,
+                "Snooze for 10 minutes",
+                snoozeIntent
+            )
         manager.notify(1, builder.build())
     }
 
@@ -78,5 +99,7 @@ class AlarmReceiver : BroadcastReceiver() {
         private const val CHANNEL_NAME = "TrashMinderNotifications"
         private const val REMINDER_TYPE = "type"
         private const val REMINDER_REPETITION = "repetition"
+        private const val SNOOZE_TYPE = "snooze_type"
+        private const val SNOOZE_REPETITION = "snooze_repetition"
     }
 }

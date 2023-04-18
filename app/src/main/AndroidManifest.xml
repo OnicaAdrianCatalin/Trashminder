@@ -33,6 +33,7 @@
                 android:value="" />
         </activity>
         <receiver android:name="com.example.trashminder.utils.AlarmReceiver" />
+        <receiver android:name="com.example.trashminder.utils.SnoozeNotificationReceiver"/>
     </application>
 
 </manifest>
