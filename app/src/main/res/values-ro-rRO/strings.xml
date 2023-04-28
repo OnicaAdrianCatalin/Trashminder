@@ -27,10 +27,9 @@
     <string name="repetition">Repetare</string>
     <string name="date_and_time_button">Data si ora</string>
     <string name="trash_type_paper">Hartie</string>
-    <string name="trash_type_metal">Metal</string>
     <string name="trash_type_glass">Sticla</string>
     <string name="trash_type_residual">Menajer</string>
-    <string name="trash_type_plastic">Plastic</string>
+    <string name="trash_type_plastic">Plastic si Metal</string>
     <string name="error">Error</string>
     <string name="paper_and_carton">Hartie si Carton</string>
     <string name="time_period_daily">Zilnic</string>

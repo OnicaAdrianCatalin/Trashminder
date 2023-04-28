@@ -234,24 +234,35 @@ class NewReminderFragment : Fragment() {
         val day = calendar.get(Calendar.DAY_OF_MONTH)
         val hour = calendar.get(Calendar.HOUR_OF_DAY)
         val minutes = calendar.get(Calendar.MINUTE)
+        var date = ""
+        var time = ""
         calendar.time = Date()
 
         val datePickerDialog = DatePickerDialog(
             context,
             { _: DatePicker, selectedYear: Int, selectedMonth: Int, selectedDayOfMonth: Int ->
-                chosenDate.value =
+                date =
                     setDateCorrectFormat(selectedMonth, selectedDayOfMonth, selectedYear)
             }, year, month, day
         )
         val timePickerDialog = TimePickerDialog(
             context,
             { _, selectedHour: Int, selectedMinute: Int ->
-                chosenDate.value += setTimeCorrectFormat(selectedHour, selectedMinute)
+                time = setTimeCorrectFormat(selectedHour, selectedMinute)
             }, hour, minutes, false
         )
         datePickerDialog.show()
+        datePickerDialog.datePicker.minDate = System.currentTimeMillis()
         datePickerDialog.setOnDismissListener {
-            timePickerDialog.show()
+            if (date != "") {
+                timePickerDialog.show()
+            }
+        }
+
+        timePickerDialog.setOnDismissListener {
+            if (time != "") {
+                chosenDate.value = date + time
+            }
         }
     }
 
