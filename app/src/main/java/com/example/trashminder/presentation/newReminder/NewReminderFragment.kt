@@ -61,7 +61,6 @@ import com.example.trashminder.presentation.theme.lightGreen
 import com.example.trashminder.utils.TimePeriod
 import com.example.trashminder.utils.TrashType
 import com.example.trashminder.utils.toResourceId
-import java.util.Calendar
 import java.util.Date
 import kotlinx.coroutines.launch
 
@@ -167,7 +166,7 @@ class NewReminderFragment : Fragment() {
                         dateAndTimeDialogTrigger.value = true
                     }
                     if (dateAndTimeDialogTrigger.value) {
-                        PickDateAndTime(chosenDate)
+                        PickDateAndTime(chosenDate, viewModel)
                         dateAndTimeDialogTrigger.value = false
                     }
                     TimePeriodPick(timespan)
@@ -226,75 +225,37 @@ class NewReminderFragment : Fragment() {
     }
 
     @Composable
-    private fun PickDateAndTime(chosenDate: MutableState<String>) {
+    private fun PickDateAndTime(chosenDate: MutableState<String>, viewModel: NewReminderViewModel) {
         val context = LocalContext.current
-        val calendar = Calendar.getInstance()
-        val year = calendar.get(Calendar.YEAR)
-        val month = calendar.get(Calendar.MONTH)
-        val day = calendar.get(Calendar.DAY_OF_MONTH)
-        val hour = calendar.get(Calendar.HOUR_OF_DAY)
-        val minutes = calendar.get(Calendar.MINUTE)
-        var date = ""
-        var time = ""
-        calendar.time = Date()
+        viewModel.calendar.time = Date()
 
         val datePickerDialog = DatePickerDialog(
             context,
             { _: DatePicker, selectedYear: Int, selectedMonth: Int, selectedDayOfMonth: Int ->
-                date =
-                    setDateCorrectFormat(selectedMonth, selectedDayOfMonth, selectedYear)
-            }, year, month, day
+                viewModel.date =
+                    viewModel.setDateCorrectFormat(selectedMonth, selectedDayOfMonth, selectedYear)
+            }, viewModel.year, viewModel.month, viewModel.day
         )
         val timePickerDialog = TimePickerDialog(
             context,
             { _, selectedHour: Int, selectedMinute: Int ->
-                time = setTimeCorrectFormat(selectedHour, selectedMinute)
-            }, hour, minutes, false
+                viewModel.time = viewModel.setTimeCorrectFormat(selectedHour, selectedMinute)
+            }, viewModel.hour, viewModel.minutes, false
         )
+
         datePickerDialog.show()
         datePickerDialog.datePicker.minDate = System.currentTimeMillis()
         datePickerDialog.setOnDismissListener {
-            if (date != "") {
+            if (viewModel.date != "") {
                 timePickerDialog.show()
             }
         }
 
         timePickerDialog.setOnDismissListener {
-            if (time != "") {
-                chosenDate.value = date + time
+            if (viewModel.time != "") {
+                chosenDate.value = viewModel.date + viewModel.time
             }
         }
-    }
-
-    private fun setDateCorrectFormat(
-        selectedMonth: Int,
-        selectedDayOfMonth: Int,
-        selectedYear: Int
-    ): String {
-        var newDay = "$selectedDayOfMonth"
-        var newMonth = "${selectedMonth + 1}"
-        if (selectedDayOfMonth < 10) {
-            newDay = "0$selectedDayOfMonth"
-        }
-        if (selectedMonth < 10) {
-            newMonth = "0${selectedMonth + 1}"
-        }
-
-        return "$newDay/$newMonth/$selectedYear"
-    }
-
-    private fun setTimeCorrectFormat(selectedHour: Int, selectedMinute: Int): String {
-        var newHour = "$selectedHour"
-        var newMinutes = "$selectedMinute"
-
-        if (selectedHour < 10) {
-            newHour = "0$selectedHour"
-        }
-        if (selectedMinute < 10) {
-            newMinutes = "0$selectedMinute"
-        }
-
-        return " $newHour:$newMinutes"
     }
 
     @Composable
