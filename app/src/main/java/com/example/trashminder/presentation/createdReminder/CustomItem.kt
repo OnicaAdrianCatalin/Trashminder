@@ -27,7 +27,6 @@ import com.example.trashminder.model.Reminder
 import com.example.trashminder.presentation.theme.black
 import com.example.trashminder.presentation.theme.blueTrash
 import com.example.trashminder.presentation.theme.greenTrash
-import com.example.trashminder.presentation.theme.red
 import com.example.trashminder.presentation.theme.yellow
 import com.example.trashminder.utils.TrashType
 import com.example.trashminder.utils.toResourceId
@@ -39,31 +38,25 @@ fun CustomItem(reminder: Reminder) {
         TrashType.Plastic -> CardItem(
             reminder = reminder,
             startColor = yellow,
-            painterId = R.drawable.plastic_bottle_png_download_image,
-            modifierImage = Modifier.size(90.dp)
-        )
-        TrashType.Metal -> CardItem(
-            reminder = reminder,
-            startColor = red,
-            painterId = R.drawable._removal_ai__tmp_63a2fb077da67,
+            painterId = R.drawable.plastic_metal,
             modifierImage = Modifier.size(90.dp)
         )
         TrashType.Paper -> CardItem(
             reminder = reminder,
             startColor = blueTrash,
-            painterId = R.drawable.stack_of_old_blank_photographs_thumb30,
+            painterId = R.drawable.paper,
             modifierImage = Modifier.size(90.dp)
         )
         TrashType.Glass -> CardItem(
             reminder = reminder,
             startColor = greenTrash,
-            painterId = R.drawable.broken_bottle_png23,
+            painterId = R.drawable.glass,
             modifierImage = Modifier.size(130.dp, 80.dp)
         )
         TrashType.Residual -> CardItem(
             reminder = reminder,
             startColor = black,
-            painterId = R.drawable.report_feat_removebg_preview,
+            painterId = R.drawable.residual,
             modifierImage = Modifier.size(110.dp, 90.dp)
         )
     }

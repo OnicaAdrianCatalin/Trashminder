@@ -13,6 +13,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -20,7 +21,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
@@ -58,19 +59,21 @@ class HomeFragment : Fragment() {
     @Composable
     fun HomeScreen() {
         val viewModel = viewModel<HomeScreenViewModel>()
+        viewModel.ProgressDialog()
+
         Box(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         ) {
             val state = rememberLazyListState()
             val context = LocalContext.current
-            LazyColumn(horizontalAlignment = Alignment.CenterHorizontally, state = state) {
+            LazyColumn(modifier = Modifier.fillMaxWidth(), horizontalAlignment = CenterHorizontally, state = state) {
                 items(viewModel.reminderResponse.value?.reminders ?: emptyList()) {
                     CustomItem(reminder = it)
 
                     NotificationPermissionDialog(it, context)
                 }
                 item {
-                    IconButton(onClick = {
+                    IconButton( onClick = {
                         findNavController().navigate(R.id.newReminderFragment)
                     }) {
                         Icon(

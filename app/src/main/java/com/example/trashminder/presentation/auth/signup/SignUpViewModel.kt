@@ -4,11 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.trashminder.presentation.auth.authUtils.AuthErrors
-import com.example.trashminder.presentation.auth.authUtils.Result
-import com.example.trashminder.presentation.auth.authUtils.assertFieldsEmpty
-import com.example.trashminder.presentation.auth.authUtils.onFailure
-import com.example.trashminder.presentation.auth.authUtils.onSuccess
+import com.example.trashminder.presentation.auth.authUtils.*
 import com.example.trashminder.services.FirebaseAuthService
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseNetworkException

@@ -27,10 +27,9 @@
     <string name="repetition"> Repetition</string>
     <string name="date_and_time_button">Date and time</string>
     <string name="trash_type_paper">Paper</string>
-    <string name="trash_type_metal">Metal</string>
     <string name="trash_type_glass">Glass</string>
     <string name="trash_type_residual">Residual</string>
-    <string name="trash_type_plastic">Plastic</string>
+    <string name="trash_type_plastic">Plastic and Metal</string>
     <string name="paper_and_carton">Paper and Carton</string>
     <string name="error">Error</string>
     <string name="time_period_daily">Daily</string>
