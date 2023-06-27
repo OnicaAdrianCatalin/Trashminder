@@ -66,14 +66,18 @@ class HomeFragment : Fragment() {
         ) {
             val state = rememberLazyListState()
             val context = LocalContext.current
-            LazyColumn(modifier = Modifier.fillMaxWidth(), horizontalAlignment = CenterHorizontally, state = state) {
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = CenterHorizontally,
+                state = state
+            ) {
                 items(viewModel.reminderResponse.value?.reminders ?: emptyList()) {
                     CustomItem(reminder = it)
 
                     NotificationPermissionDialog(it, context)
                 }
                 item {
-                    IconButton( onClick = {
+                    IconButton(onClick = {
                         findNavController().navigate(R.id.newReminderFragment)
                     }) {
                         Icon(
@@ -160,6 +164,8 @@ fun setNotifications(
         context,
         timeInMilliseconds.toInt(),
         reminder.type.name,
-        reminder.repetition.name
+        reminder.repetition.name,
+        reminder.date,
+        reminder.id
     )
 }
