@@ -18,7 +18,9 @@ class Notifications {
         context: Context,
         id: Int,
         type: String?,
-        repetition: String?
+        repetition: String?,
+        date: String,
+        idReminder: Int
     ) {
 
         alarmManager = context.getSystemService(ComponentActivity.ALARM_SERVICE) as AlarmManager
@@ -26,6 +28,8 @@ class Notifications {
         val intent = Intent(context, AlarmReceiver::class.java).apply {
             putExtra(REMINDER_TYPE, type)
             putExtra(REMINDER_REPETITION, repetition)
+            putExtra(REMINDER_DATE, date)
+            putExtra(REMINDER_ID, idReminder)
         }
 
         pendingIntent = PendingIntent.getBroadcast(
@@ -61,5 +65,7 @@ class Notifications {
     companion object {
         private const val REMINDER_TYPE = "type"
         private const val REMINDER_REPETITION = "repetition"
+        private const val REMINDER_DATE = "date"
+        private const val REMINDER_ID = "id"
     }
 }
