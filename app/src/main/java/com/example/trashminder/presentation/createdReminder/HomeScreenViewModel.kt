@@ -22,7 +22,7 @@ class HomeScreenViewModel : ViewModel() {
     val reminderResponse = mutableStateOf<ListOfReminders?>(null)
     private val firestore = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
-    private var showDialog by mutableStateOf(false)
+    var showDialog by mutableStateOf(false)
 
 
     init {
@@ -39,20 +39,6 @@ class HomeScreenViewModel : ViewModel() {
                     showDialog = false
                 }
             }
-    }
-
-    @Composable
-    fun ProgressDialog() {
-        if (showDialog) {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .size(100.dp)
-                    .background(Color.White, shape = RoundedCornerShape(8.dp))
-            ) {
-                CircularProgressIndicator(color = greenTrash)
-            }
-        }
     }
 
     companion object {

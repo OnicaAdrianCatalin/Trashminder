@@ -7,6 +7,9 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import androidx.activity.ComponentActivity
+import com.example.trashminder.model.Reminder
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 class Notifications {
 
@@ -17,19 +20,15 @@ class Notifications {
         time: Long,
         context: Context,
         id: Int,
-        type: String?,
-        repetition: String?,
-        date: String,
-        idReminder: Int
+        reminder: Reminder,
     ) {
+
+        val jsonReminder = Json.encodeToString(reminder)
 
         alarmManager = context.getSystemService(ComponentActivity.ALARM_SERVICE) as AlarmManager
 
         val intent = Intent(context, AlarmReceiver::class.java).apply {
-            putExtra(REMINDER_TYPE, type)
-            putExtra(REMINDER_REPETITION, repetition)
-            putExtra(REMINDER_DATE, date)
-            putExtra(REMINDER_ID, idReminder)
+            putExtra(REMINDER, jsonReminder)
         }
 
         pendingIntent = PendingIntent.getBroadcast(
@@ -63,9 +62,6 @@ class Notifications {
     }
 
     companion object {
-        private const val REMINDER_TYPE = "type"
-        private const val REMINDER_REPETITION = "repetition"
-        private const val REMINDER_DATE = "date"
-        private const val REMINDER_ID = "id"
+        private const val REMINDER="reminder"
     }
 }

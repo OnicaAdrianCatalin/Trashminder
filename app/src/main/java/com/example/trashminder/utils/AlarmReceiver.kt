@@ -10,8 +10,12 @@ import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.trashminder.R
+import com.example.trashminder.model.Reminder
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -25,12 +29,9 @@ class AlarmReceiver : BroadcastReceiver() {
         val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val channelName = CHANNEL_NAME
         val channelId = CHANNEL_ID
-        val type = intent?.getStringExtra(REMINDER_TYPE)
-        val repetition = intent?.getStringExtra(REMINDER_REPETITION)
-        val date = intent?.getStringExtra(REMINDER_DATE)
-        val idReminder = intent?.getIntExtra(REMINDER_ID, 0)
+        val reminder = intent?.getStringExtra(REMINDER)
 
-        Log.d("Notifications", "type= $type, repetition= $repetition")
+        val objReminder = reminder?.let { Json.decodeFromString<Reminder>(it) }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel =
@@ -39,7 +40,7 @@ class AlarmReceiver : BroadcastReceiver() {
         }
 
         if (!Snooze.isSnoozed) {
-            setRepetitiveAlarm(Notifications(), context, type, repetition, date, idReminder)
+            setRepetitiveAlarm(Notifications(), context, objReminder)
         } else {
             Snooze.isSnoozed = false
         }
@@ -48,17 +49,24 @@ class AlarmReceiver : BroadcastReceiver() {
             context,
             2,
             Intent(context, SnoozeNotificationReceiver::class.java).apply {
-                putExtra(SNOOZE_TYPE, type)
-                putExtra(SNOOZE_REPETITION, repetition)
-                putExtra(SNOOZE_DATE, date)
-                putExtra(SNOOZE_ID, idReminder)
+                putExtra(SNOOZE_REMINDER, reminder)
             },
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
+        createBuilder(context, channelId, objReminder, snoozeIntent, manager)
+    }
+
+    private fun createBuilder(
+        context: Context,
+        channelId: String,
+        objReminder: Reminder?,
+        snoozeIntent: PendingIntent,
+        manager: NotificationManager
+    ) {
         val builder = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.ic_notification)
-            .setContentTitle(type)
+            .setContentTitle(objReminder?.type.toString())
             .setContentText(context.getString(R.string.notification_content_text))
             .addAction(
                 R.drawable.ic_baseline_snooze_24,
@@ -71,100 +79,85 @@ class AlarmReceiver : BroadcastReceiver() {
     private fun setRepetitiveAlarm(
         notifications: Notifications,
         context: Context,
-        type: String?,
-        repetition: String?,
-        date: String?,
-        idReminder: Int?
+        objReminder: Reminder?,
     ) {
         val cal = Calendar.getInstance().apply {
-            when (repetition) {
-                TimePeriod.WEEKLY.name -> this.timeInMillis =
+            when (objReminder?.repetition) {
+                TimePeriod.WEEKLY -> this.timeInMillis =
                     timeInMillis + TimeUnit.DAYS.toMillis(7)
-                TimePeriod.EVERY_TWO_WEEKS.name -> this.timeInMillis =
+                TimePeriod.EVERY_TWO_WEEKS -> this.timeInMillis =
                     timeInMillis + TimeUnit.DAYS.toMillis(14)
-                TimePeriod.EVERY_THREE_WEEKS.name -> this.timeInMillis =
+                TimePeriod.EVERY_THREE_WEEKS -> this.timeInMillis =
                     timeInMillis + TimeUnit.DAYS.toMillis(21)
-                TimePeriod.MONTHLY.name -> this.timeInMillis =
+                TimePeriod.MONTHLY -> this.timeInMillis =
                     timeInMillis + getMonthDuration()
+                else -> {}
             }
         }
 
         val formatter = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.FRANCE)
         val dateString = formatter.format(Date(cal.timeInMillis))
 
-        if (idReminder != null) {
-            updateReminder(date, repetition, type, dateString, idReminder)
+        val newReminder = objReminder?.id?.let { objReminder.copy(date = dateString, id = it + 1) }
 
+        updateReminder(objReminder, newReminder)
+
+        if (newReminder != null) {
             notifications.setRepetitiveAlarm(
                 cal.timeInMillis,
                 context,
                 cal.timeInMillis.toInt(),
-                type,
-                repetition,
-                dateString,
-                idReminder + 1
+                newReminder
             )
         }
-
-        Log.d("Update", "dateString = $dateString")
     }
 
     private fun updateReminder(
-        date: String?,
-        repetition: String?,
-        type: String?,
-        dateString: String,
-        idReminder: Int
+        objReminder: Reminder?,
+        newReminder: Reminder?,
     ) {
-        val trash = mutableMapOf(
-            "date" to date,
-            "id" to idReminder,
-            "repetition" to repetition,
-            "type" to type
-        )
 
-        Log.d("Update", "dateString = $dateString")
-
-        val newTrash = mutableMapOf(
-            "date" to dateString,
-            "id" to idReminder + 1,
-            "repetition" to repetition,
-            "type" to type
-        )
-
-        firestore.collection("users").whereArrayContains("reminders", trash).get()
-            .addOnCompleteListener { task ->
-                task.apply {
-                    if (task.isSuccessful) {
-                        for (document in result) {
-                            val docIdRef = firestore.collection("users").document(document.id)
-                            docIdRef.update("reminders", FieldValue.arrayRemove(trash))
-                                .addOnCompleteListener { removeTask ->
-                                    if (removeTask.isSuccessful) {
-                                        Log.d("Update", "Deelete complete")
-                                        docIdRef.update(
-                                            "reminders",
-                                            FieldValue.arrayUnion(newTrash)
-                                        ).addOnCompleteListener { additionTask ->
-                                            if (additionTask.isSuccessful) {
-                                                Log.d("Update", "Update complete")
-                                            } else {
-                                                additionTask.exception?.message?.let {
-                                                    Log.e("Update", it)
-                                                }
-                                            }
-                                        }
-                                    } else {
-                                        removeTask.exception?.message?.let {
-                                            Log.e("Update", it)
-                                        }
-                                    }
-                                }
+        if (objReminder != null) {
+            firestore.collection(collectionPath).whereArrayContains(arrayPath, objReminder).get()
+                .addOnCompleteListener { task ->
+                    task.apply {
+                        if (task.isSuccessful) {
+                            for (document in result) {
+                                val docIdRef =
+                                    firestore.collection(collectionPath).document(document.id)
+                                updateArrayElement(docIdRef, objReminder, newReminder)
+                            }
+                        } else {
+                            task.exception?.message?.let {
+                                Log.e("Update", it)
+                            }
                         }
-                    } else {
-                        task.exception?.message?.let {
-                            Log.e("Update", it)
+                    }
+                }
+        }
+    }
+
+    private fun updateArrayElement(
+        docIdRef: DocumentReference,
+        objReminder: Reminder,
+        newReminder: Reminder?
+    ) {
+        docIdRef.update(arrayPath, FieldValue.arrayRemove(objReminder))
+            .addOnCompleteListener { removeTask ->
+                if (removeTask.isSuccessful) {
+                    docIdRef.update(
+                        arrayPath,
+                        FieldValue.arrayUnion(newReminder)
+                    ).addOnCompleteListener { additionTask ->
+                        if (!additionTask.isSuccessful) {
+                            additionTask.exception?.message?.let {
+                                Log.e("Update", it)
+                            }
                         }
+                    }
+                } else {
+                    removeTask.exception?.message?.let {
+                        Log.e("Update", it)
                     }
                 }
             }
@@ -179,13 +172,10 @@ class AlarmReceiver : BroadcastReceiver() {
     companion object {
         private const val CHANNEL_ID = "TrashMinderChannel"
         private const val CHANNEL_NAME = "TrashMinderNotifications"
-        private const val REMINDER_TYPE = "type"
-        private const val REMINDER_REPETITION = "repetition"
-        private const val REMINDER_DATE = "date"
-        private const val REMINDER_ID = "id"
-        private const val SNOOZE_TYPE = "snooze_type"
-        private const val SNOOZE_REPETITION = "snooze_repetition"
-        private const val SNOOZE_DATE = "snooze_date"
-        private const val SNOOZE_ID = "snooze_id"
+        private const val REMINDER = "reminder"
+        private const val SNOOZE_REMINDER = "snooze_reminder"
+        private const val collectionPath = "users"
+        private const val arrayPath = "reminders"
+
     }
 }

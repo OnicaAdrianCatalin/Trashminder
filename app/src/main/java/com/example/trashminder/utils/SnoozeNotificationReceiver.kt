@@ -4,30 +4,29 @@ import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import com.example.trashminder.model.Reminder
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import java.util.*
 
 class SnoozeNotificationReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent?) {
 
-        val type = intent?.getStringExtra(SNOOZE_TYPE)
-        val repetition = intent?.getStringExtra(SNOOZE_REPETITION)
-        val reminderDate=intent?.getStringExtra(SNOOZE_DATE)
-        val reminderId=intent?.getIntExtra(SNOOZE_ID, 0)
+        val reminder = intent?.getStringExtra(SNOOZE_REMINDER)
+
+        val objReminder = reminder?.let { Json.decodeFromString<Reminder>(it) }
 
         val calendar: Calendar = Calendar.getInstance()
         calendar.add(Calendar.MINUTE, 10)
         val date: Date = calendar.time
         Snooze.isSnoozed = true
-        if (reminderDate != null && reminderId != null) {
+        if (objReminder != null) {
             Notifications().setRepetitiveAlarm(
                 date.time,
                 context,
                 date.time.toInt(),
-                type,
-                repetition,
-                reminderDate,
-                reminderId
+                objReminder
             )
         }
 
@@ -36,9 +35,6 @@ class SnoozeNotificationReceiver : BroadcastReceiver() {
     }
 
     companion object {
-        private const val SNOOZE_TYPE = "snooze_type"
-        private const val SNOOZE_REPETITION = "snooze_repetition"
-        private const val SNOOZE_DATE = "snooze_date"
-        private const val SNOOZE_ID = "snooze_id"
+        private const val SNOOZE_REMINDER = "snooze_reminder"
     }
 }

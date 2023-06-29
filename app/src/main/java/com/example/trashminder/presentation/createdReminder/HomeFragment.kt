@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,9 +19,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,6 +38,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.fragment.findNavController
 import com.example.trashminder.R
 import com.example.trashminder.model.Reminder
+import com.example.trashminder.presentation.theme.greenTrash
 import com.example.trashminder.utils.Notifications
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.ZoneOffset
@@ -59,7 +64,7 @@ class HomeFragment : Fragment() {
     @Composable
     fun HomeScreen() {
         val viewModel = viewModel<HomeScreenViewModel>()
-        viewModel.ProgressDialog()
+        ProgressDialog(viewModel.showDialog)
 
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -88,6 +93,20 @@ class HomeFragment : Fragment() {
                         )
                     }
                 }
+            }
+        }
+    }
+
+    @Composable
+    fun ProgressDialog(showDialog: Boolean) {
+        if (showDialog) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .size(100.dp)
+                    .background(Color.White, shape = RoundedCornerShape(8.dp))
+            ) {
+                CircularProgressIndicator(color = greenTrash)
             }
         }
     }
@@ -158,14 +177,10 @@ fun setNotifications(
     timeSec: Long,
     timeInMilliseconds: Long
 ) {
-
     Notifications().setRepetitiveAlarm(
         timeSec,
         context,
         timeInMilliseconds.toInt(),
-        reminder.type.name,
-        reminder.repetition.name,
-        reminder.date,
-        reminder.id
+        reminder
     )
 }
